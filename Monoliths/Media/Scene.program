@@ -1,0 +1,167 @@
+vertex_program VS_Phong hlsl
+{
+	source Scene.hlsl
+	entry_point VS_Phong
+	target vs_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto world transpose_world_matrix
+		param_named_auto worldView transpose_worldview_matrix
+		param_named_auto worldViewProj transpose_worldviewproj_matrix
+		param_named_auto worldIT inverse_world_matrix
+
+		param_named_auto cameraPosition camera_position
+		param_named_auto lightPositions light_position_array 4
+		param_named_auto lightCount light_count
+	}
+}
+
+
+fragment_program PS_Phong hlsl
+{
+	source Scene.hlsl
+	entry_point PS_Phong
+	target ps_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto ambient surface_ambient_colour
+		param_named_auto diffuse surface_diffuse_colour
+		param_named_auto specular surface_specular_colour
+		param_named_auto shininess surface_shininess
+		param_named_auto ambientLight ambient_light_colour
+
+		param_named_auto lightDiffuse light_diffuse_colour_power_scaled_array 4
+		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
+		param_named_auto lightAttenuation light_attenuation_array 4
+		param_named_auto lightCount light_count
+	}
+}
+
+
+fragment_program PS_PhongTextured hlsl
+{
+	source Scene.hlsl
+	entry_point PS_PhongTextured
+	target ps_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto ambient surface_ambient_colour
+		param_named_auto diffuse surface_diffuse_colour
+		param_named_auto specular surface_specular_colour
+		param_named_auto shininess surface_shininess
+		param_named_auto ambientLight ambient_light_colour
+
+		param_named_auto lightDiffuse light_diffuse_colour_power_scaled_array 4
+		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
+		param_named_auto lightAttenuation light_attenuation_array 4
+		param_named_auto lightCount light_count
+	}
+}
+
+fragment_program PS_PhongToonshade hlsl
+{
+	source Scene.hlsl
+	entry_point PS_PhongToonshade
+	target ps_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto ambient surface_ambient_colour
+		param_named_auto diffuse surface_diffuse_colour
+		param_named_auto specular surface_specular_colour
+		param_named_auto shininess surface_shininess
+		param_named_auto ambientLight ambient_light_colour
+
+		param_named_auto lightDiffuse light_diffuse_colour_power_scaled_array 4
+		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
+		param_named_auto lightAttenuation light_attenuation_array 4
+		param_named_auto lightCount light_count
+	}
+}
+
+fragment_program PS_PhongToonshadeTextured hlsl
+{
+	source Scene.hlsl
+	entry_point PS_PhongToonshadeTextured
+	target ps_3_0
+
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto ambient surface_ambient_colour
+		param_named_auto diffuse surface_diffuse_colour
+		param_named_auto specular surface_specular_colour
+		param_named_auto shininess surface_shininess
+		param_named_auto ambientLight ambient_light_colour
+
+		param_named_auto lightDiffuse light_diffuse_colour_power_scaled_array 4
+		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
+		param_named_auto lightAttenuation light_attenuation_array 4
+		param_named_auto lightCount light_count
+	}
+}
+
+vertex_program VS_Quad hlsl
+{
+	source Postprocess.hlsl
+	entry_point VS_Quad
+	target vs_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto worldViewProj transpose_worldviewproj_matrix
+	}
+}
+
+fragment_program PS_Compose hlsl
+{
+	source Postprocess.hlsl
+	entry_point PS_Compose
+	target ps_3_0
+	optimisation_level none
+
+	default_params
+	{
+		param_named_auto viewportSize viewport_size
+		param_named_auto fogColor fog_colour
+	}
+}
+
+vertex_program VS_DepthMap hlsl
+{
+	source Postprocess.hlsl
+	entry_point VS_DepthMap
+	target vs_3_0
+
+	optimisation_level none
+	
+	default_params
+	{
+		param_named_auto worldViewProj transpose_worldviewproj_matrix
+		param_named_auto worldView transpose_worldview_matrix
+		
+	}
+}
+
+fragment_program PS_DepthMap hlsl
+{
+	source Postprocess.hlsl
+	entry_point PS_DepthMap
+	target ps_3_0
+	optimisation_level none
+}
