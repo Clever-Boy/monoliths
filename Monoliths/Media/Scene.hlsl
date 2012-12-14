@@ -20,8 +20,8 @@ struct VERTEX_OUT
 	float2 Texture : TEXCOORD1;
 
 	float3 EyeDir : TEXCOORD2;
-	float Depth : TEXCOORD3;
-	float3 LightDir[MAX_LIGHT_COUNT] : TEXCOORD4;
+	//float2 DepthHeight : TEXCOORD3;
+	float3 LightDir[MAX_LIGHT_COUNT] : TEXCOORD3;
 };
 
 
@@ -41,9 +41,9 @@ float Fog(float2 c)
 	return length(c);
 }
 
+
 VERTEX_OUT VS_Phong(in VERTEX_IN v, 
 					   uniform float4x4 world,
-					   uniform float4x4 worldView,
 					   uniform float4x4 worldViewProj,
 					   uniform float4x4 worldIT,
 					   uniform float4 cameraPosition,
@@ -67,7 +67,8 @@ VERTEX_OUT VS_Phong(in VERTEX_IN v,
 	
 	res.Texture = v.Texture;
 	
-	res.Depth = -mul(v.Position, worldView).z;
+	//res.DepthHeight.x = -mul(v.Position, worldView).z;
+	//res.DepthHeight.y = worldPos.y;
 	//float2 c = float2(-mul(v.Position, worldView).z, worldPos.y);
 	//res.Depth = Fog(c);
 	return res;
@@ -129,7 +130,8 @@ void AddDiffuseSpecular(float3 lightDir,
 						 float4 specularLight,
 						 float4 lightAttenuation,
 						 float shininess,
-						 bool toonshade,
+						 bool toonshadeDiffuse,
+						 bool toonshadeSpecular,
 					     
 						 inout float4 diffuse,
 						 inout float4 specular
@@ -145,9 +147,12 @@ void AddDiffuseSpecular(float3 lightDir,
 	float lumD = luminance * saturate(dot(n, L));
 	float lumS = pow(saturate(dot(n,h)), shininess);
 	
-	if (toonshade)
+	if (toonshadeDiffuse)
 	{
-		//lumD = QuantizeDiffuse(lumD);
+		lumD = QuantizeDiffuse(lumD);
+	}
+	if (toonshadeSpecular)
+	{
 		lumS = QuantizeSpecular(lumS);
 	}
 
@@ -162,7 +167,8 @@ void SumDiffuseSpecularForAllLights(VERTEX_OUT v,
 						float4 lightAttenuation[MAX_LIGHT_COUNT],
 						float shininess,
 						float lightCount,
-						bool toonshade,
+						bool toonshadeDiffuse,
+						bool toonshadeSpecular,
 						out float4 difSum,
 						out float4 specSum)
 {
@@ -175,7 +181,7 @@ void SumDiffuseSpecularForAllLights(VERTEX_OUT v,
 							lightSpecular[i],
 							lightAttenuation[i],
 							shininess,
-							toonshade,
+							toonshadeDiffuse, toonshadeSpecular,
 							difSum, specSum);
 	}
 	difSum /= lightCount;
@@ -196,10 +202,10 @@ float4 PS_Phong(VERTEX_OUT v,
 				  ) : COLOR0
 {
 	float4 difSum, specSum;
-	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, difSum, specSum);
+	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, false, difSum, specSum);
 
 	float4 c = (ambient*ambientLight + difSum*diffuse + specSum*specular);
-	c.w = v.Depth;
+	//c.w = v.Depth;
 	return c;
 }
 
@@ -218,11 +224,11 @@ float4 PS_PhongTextured(VERTEX_OUT v,
 				  ) : COLOR0
 {
 	float4 difSum, specSum;
-	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, difSum, specSum);
+	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, false, difSum, specSum);
 	
 	float4 c = tex2D(tex, v.Texture);
 	c = c*(ambient*ambientLight + difSum*diffuse) + specSum*specular;
-	c.w = v.Depth;
+	//c.w = v.Depth;
 	return c;
 }
 
@@ -240,7 +246,26 @@ float4 PS_PhongToonshade(VERTEX_OUT v,
 				  ) : COLOR0
 {
 	float4 difSum, specSum;
-	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, difSum, specSum);
+	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, true, difSum, specSum);
+	
+	return (ambient*ambientLight + difSum*diffuse + specSum*specular)*float4(1,1,1, 0.1);
+}
+
+float4 PS_PhongToonshadeSpecular(VERTEX_OUT v,
+				  uniform float4 ambient,
+				  uniform float4 ambientLight,
+				  uniform float4 diffuse,
+				  uniform float4 specular,
+				  uniform float shininess,
+
+				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
+				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
+				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
+				  uniform float lightCount
+				  ) : COLOR0
+{
+	float4 difSum, specSum;
+	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, true, difSum, specSum);
 	
 	return (ambient*ambientLight + difSum*diffuse + specSum*specular)*float4(1,1,1, 0.1);
 }
@@ -262,8 +287,24 @@ float4 PS_PhongToonshadeTextured(VERTEX_OUT v,
 				  ) : COLOR0
 {
 	float4 difSum, specSum;
-	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, difSum, specSum);
+	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, true, difSum, specSum);
 	
 	float4 texel = tex2D(tex, v.Texture);
 	return texel*(ambient*ambientLight + difSum*diffuse) + specSum*specular;
+}
+
+float Fog(float c)
+{
+	const float FOG_START = 10000;
+	const float FOG_END = 100000;
+	const float FOG_EXPONENT = 0.2;
+	if (c == 0)
+	{
+		return 1;
+	}
+	else
+	{
+		c = saturate((c-FOG_START)/(FOG_END-FOG_START));
+		return pow(c, FOG_EXPONENT);
+	}
 }

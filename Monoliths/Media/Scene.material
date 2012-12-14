@@ -59,6 +59,48 @@ abstract material Phong
 	}
 }
 
+abstract material PhongToonshadeOnlySpecular
+{
+	lod_stategy Distance
+	lod_values 2000 4000 8000
+	technique main
+	{
+		pass 
+		{
+			ambient $ambient
+			diffuse $diffuse
+			specular $specular
+
+			vertex_program_ref VS_Phong { }
+			fragment_program_ref PS_Phong { }
+		}
+	}
+
+	technique toonshade
+	{
+		scheme toonshade
+		pass
+		{
+			ambient $ambient
+			diffuse $diffuse
+			specular $specular
+
+			vertex_program_ref VS_Phong { }
+			fragment_program_ref PS_PhongToonshadeSpecular { }
+		}
+	}
+
+	technique depthmap
+	{
+		scheme depthmap
+		pass
+		{
+			vertex_program_ref VS_DepthMap { }
+			fragment_program_ref PS_DepthMap { }
+		}
+	}
+}
+
 abstract material PhongTextured
 {
 	technique main
@@ -132,6 +174,7 @@ material compose
 
 			texture_unit
 			{
+				filtering none
 				tex_address_mode clamp
 			}
 
@@ -143,6 +186,7 @@ material compose
 
 			texture_unit
 			{
+				filtering none
 				tex_address_mode clamp
 			}
 		}
@@ -150,6 +194,14 @@ material compose
 }
 
 material BuziNinnya : Phong
+{
+	set $ambient "0.05 0.05 0.05 1"
+	//set $diffuse "2.0 2.0 0.0 1.0"
+	set $diffuse "3 4 5 1"
+	set $specular "3 3 3 15"
+}
+
+material Monolith : PhongToonshadeOnlySpecular
 {
 	set $ambient "0.05 0.05 0.05 1"
 	set $diffuse "2.0 2.0 0.0 1.0"
