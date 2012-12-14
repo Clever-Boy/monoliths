@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8168C75D-09EB-4878-ABFE-A9B2E16ECEC5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Terrain</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v100</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm192 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\debug;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm256 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\release;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ControlObjectVisibilityListener.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Ground.h" />
+    <ClInclude Include="Monolith.h" />
+    <ClInclude Include="MonolithGenerator.h" />
+    <ClInclude Include="World.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="GameController.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="World.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GameController.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico" />
+    <Image Include="Terrain.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Media\Scene.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T vs_3_0 /E VS_Phong /Fo "%(Filename)_vs.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_Phong /Fo "%(Filename)_ps.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_PhongTextured /Fo "%(Filename)_ps.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_PhongToonshade /Fo "%(Filename)_ps.fxo" "%(FullPath)"</Command>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName)_vs.fxo;$(InputName)_ps.fxo</Outputs>
+    </CustomBuild>
+    <None Include="Media\Scene.material" />
+    <None Include="Media\Scene.program" />
+    <CustomBuild Include="Media\Postprocess.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T vs_3_0 /E VS_Quad /Fo "%(Filename)_vs.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T vs_3_0 /E VS_DepthMap /Fo "%(Filename)_vs.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_Compose /Fo "%(Filename)_ps.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_DepthMap /Fo "%(Filename)_ps.fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputName)_ps.fxo</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T vs_3_0 /E VS_Quad /Fo "%(Filename)_vs.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T vs_3_0 /E VS_DepthMap /Fo "%(Filename)_vs.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_Compose /Fo "%(Filename)_ps.fxo" "%(FullPath)"
+"$(DXSDK_DIR)Utilities\bin\x86\"fxc.exe /T ps_3_0 /E PS_DepthMap /Fo "%(Filename)_ps.fxo" "%(FullPath)"</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(InputName)_ps.fxo</Outputs>
+    </CustomBuild>
+    <None Include="Media\Global.compositor" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
