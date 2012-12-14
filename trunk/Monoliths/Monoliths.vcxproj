@@ -62,7 +62,12 @@
       <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I</Command>
+      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OgreMain_d.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\RenderSystem_Direct3D9_d.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OIS_d.dll" "$(OutDir)" /F /R /Y /I
+
+xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,9 +94,6 @@
       <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControlObjectVisibilityListener.h" />
     <ClInclude Include="GameObject.h" />

@@ -19,7 +19,7 @@ protected:
 	virtual std::vector<MovableObject*> createEntitiesImpl(SceneManager* sceneManager)
 	{
 		std::vector<MovableObject*> entities;
-		ManualObject* cube = createCubeMesh("kaka", "BuziNinnya", _a, _b, _c);
+		ManualObject* cube = createCubeMesh("kaka", "Monolith", _a, _b, _c);
 		entities.push_back(cube);
 		return entities;
 	}

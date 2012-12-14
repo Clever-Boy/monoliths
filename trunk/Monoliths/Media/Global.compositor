@@ -3,14 +3,15 @@ compositor Global
 	technique
 	{
 		texture original target_width target_height PF_FLOAT16_RGBA
-		texture originalNoGround target_width target_height PF_FLOAT16_RGBA
 		texture toonshaded target_width target_height PF_FLOAT16_RGBA
+		texture depthmap target_width target_height PF_FLOAT16_RGBA
 		
 		target original
 		{
 			input previous
 		}
 
+		/*
 		target originalNoGround
 		{
 			input none
@@ -20,6 +21,7 @@ compositor Global
 			}
 			pass render_scene { }
 		}
+		*/
 
 		target toonshaded
 		{
@@ -33,6 +35,17 @@ compositor Global
 			pass render_scene { }
 		}
 
+		target depthmap
+		{
+			input none
+			material_scheme depthmap
+
+			pass clear
+			{
+				colour_value 0 0 0 0
+			}
+			pass render_scene { }
+		}
 
 		target_output
 		{
@@ -42,8 +55,8 @@ compositor Global
 			{
 				material compose
 				input 0 original
-				input 1 originalNoGround
-				input 2 toonshaded
+				input 1 toonshaded
+				input 2 depthmap
 			}
 		}
 	}
