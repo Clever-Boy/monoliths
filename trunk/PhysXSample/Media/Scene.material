@@ -1,0 +1,35 @@
+
+
+material Rocky
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.5 0.5 0.5 1.0
+			diffuse 5 5 5 1.0 
+			texture_unit
+			{
+				texture rockwall.tga
+				colour_op modulate
+			}
+		}
+	}
+}
+
+material BuziNinnya
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.5 0.5 0.5 1.0
+			diffuse 5 5 5 1.0 
+			texture_unit
+			{
+				texture nskingr.jpg
+				colour_op modulate
+			}
+		}
+	}
+}
