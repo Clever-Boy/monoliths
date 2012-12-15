@@ -52,14 +52,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm192 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\debug;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\debug;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Lib\win32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;PhysX3CHECKED_x86.lib;PhysX3CommonCHECKED_x86.lib;PhysX3ExtensionsCHECKED.lib;PhysX3CookingCHECKED_x86.lib;PhysXVisualDebuggerSDKCHECKED.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I
@@ -67,7 +67,8 @@ xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OgreMain_d.dll" "$(Ou
 xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\RenderSystem_Direct3D9_d.dll" "$(OutDir)" /F /R /Y /I
 xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OIS_d.dll" "$(OutDir)" /F /R /Y /I
 
-xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
+xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Bin\win32\*.dll" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -95,6 +96,7 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoxObject.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -111,6 +113,9 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <Image Include="Terrain.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Media\doboz.material" />
+    <None Include="Media\Phong.hlsl" />
+    <None Include="Media\Phong.material" />
     <None Include="Media\Scene.material" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

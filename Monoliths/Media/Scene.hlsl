@@ -24,7 +24,6 @@ struct VERTEX_OUT
 	float3 LightDir[MAX_LIGHT_COUNT] : TEXCOORD3;
 };
 
-
 float3 CalcLightDir(float3 worldPos, float4 lightPos)
 {	
 	return lightPos.xyz - worldPos*lightPos.w;

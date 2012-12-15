@@ -1,1 +1,2 @@
-Ogre SDK 1.8.1 comes here. (In folder OgreSDK_vc10_v1-8-1)
+- Ogre SDK 1.8.1 comes here. (In folder OgreSDK_vc10_v1-8-1)
+- PhysX SDK comes here

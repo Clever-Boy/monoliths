@@ -135,7 +135,7 @@ abstract material PhongTextured
 
 			texture_unit
 			{
-				tex_address_mode mirror
+				//tex_address_mode mirror
 				texture $texture
 			}
 		}
@@ -210,10 +210,10 @@ material Monolith : PhongToonshadeOnlySpecular
 
 material Ground : PhongTextured
 {
-	set $ambient "2 2 2 1"
-	set $diffuse "5.0 5.0 5.0 1.0"
-	set $specular "0.0 0.0 0.0 0"
-	set $texture "moonsurface.jpg"
+	set $ambient "1 1 1 1"
+	set $diffuse "3.0 3.0 3.0 1.0"
+	set $specular "0.5 0.5 0.5 0"
+	set $texture "concrete_wall.png"
 }
 
 material RefNinnya
