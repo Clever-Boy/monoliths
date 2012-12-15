@@ -1,8 +1,38 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GameController.h"
+#include "BoxObject.h"
 
 using namespace Ogre;
 
+void GameController::initPhysX()
+{
+	
+	_foundation = PxCreateFoundation(PX_PHYSICS_VERSION,
+		_DefaultAllocatorCallback, _DefaultErrorCallback);
+	_physics = PxCreatePhysics(PX_PHYSICS_VERSION, *_foundation, PxTolerancesScale());
+	_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *_foundation, PxCookingParams());
+
+	PxSceneDesc sceneDesc(_physics->getTolerancesScale());
+	sceneDesc.gravity = PxVec3(0,-1000,0);
+	if (!sceneDesc.cpuDispatcher)
+	{
+		_cpuDispatcher = PxDefaultCpuDispatcherCreate(4);
+		sceneDesc.cpuDispatcher = _cpuDispatcher;
+	}
+
+	if (!sceneDesc.filterShader)
+	{
+		sceneDesc.filterShader = &PxDefaultSimulationFilterShader;
+	}
+	
+#ifdef PX_WINDOWS
+	//Px
+#endif
+
+	_scene = _physics->createScene(sceneDesc);
+
+	
+}
 
 
 void GameController::setupRenderTargets()
@@ -13,7 +43,7 @@ void GameController::setupRenderTargets()
 void GameController::setupScene()
 {
 	_camera =  _sceneManager->createCamera("PlayerCam");
-	_camera->setPosition(Ogre::Vector3(0,150, -200 ));
+	_camera->setPosition(Ogre::Vector3(0,200, -1000 ));
 	//_camera->lookAt(Ogre::Vector3(0,0,0));
 	_camera->setDirection(Ogre::Vector3::UNIT_Z); 
 	_camera->setNearClipDistance(5);
@@ -23,6 +53,9 @@ void GameController::setupScene()
 	Viewport* viewport = _window->addViewport(_camera);
 	viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
 	_window->setActive(true);
+
+	
+
 	
 	Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	MeshPtr mp = MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -31,9 +64,32 @@ void GameController::setupScene()
 	addEntity(entGround, "Rocky");
 
 	Ogre::Entity* entNinja = _sceneManager->createEntity("Ninja", "ninja.mesh");
-	addEntity(entNinja, "BuziNinnya");
+	_ninjaNode = addEntity(entNinja, "BuziNinnya");
 
+	PxMaterial* matcsi = _physics->createMaterial(0.5,0.5,0.5);
+	PxRigidStatic* pxPlane = PxCreatePlane(*_physics, PxPlane(PxVec3(0,1,0), 0), *matcsi);
+	_scene->addActor(*pxPlane);
+
+	/*BoxObject* box1 = new BoxObject(150,0,0, this);
+	_boxes.push_back(box1);
+
+	BoxObject* box2 = new BoxObject(150,100,0, this);
+	_boxes.push_back(box2);
+
+	BoxObject* box3 = new BoxObject(150,200,0, this);
+	_boxes.push_back(box2);*/
+
+
+	BoxObject* box1 = new BoxObject(-200,300,0, this);
+	_boxes.push_back(box1);
+
+	BoxObject* box2 = new BoxObject(200,1000,0, this);
+	_boxes.push_back(box2);
+
+	BoxObject* box3 = new BoxObject(0,100,500, this);
+	_boxes.push_back(box3);	
 }
+
 
 bool GameController::frameStarted(const FrameEvent& evt)
 { 
@@ -43,18 +99,63 @@ bool GameController::frameStarted(const FrameEvent& evt)
 
 	_time += evt.timeSinceLastEvent;
 
-	if (_pointLight != NULL)
-	{
-		float dz = sin(_time*20) * 100;
-		_pointLight->setPosition(_lightOrigo + Ogre::Vector3(-dz*0.6+100, 0, dz-200));
-	}
-	
-
 	if (_keyboard->isKeyDown(KC_ESCAPE))
 	{
 		return false;
 	}
 
+	if (_keyboard->isKeyDown(KC_SPACE))
+	{
+		for (int i = 0; i < _boxes.size(); i++)
+		{
+			_boxes[i]->reset();
+		}
+	}
+
+	_ninjaNode->setPosition(_time*500,0,0);
+
+	const float stepSize = 0.01f;
+	_simulationAccumulator+=evt.timeSinceLastFrame;
+	
+	if (_simulationAccumulator>=stepSize)
+	{
+		_simulationAccumulator-=stepSize;
+		_scene->simulate(stepSize);
+		_scene->fetchResults(true);
+	}
+
+	for (int i = 0; i < _boxes.size(); i++)
+	{
+		_boxes[i]->update();
+	}
+
 	return true; 
 }
 
+void GameController::setupPVD()
+{
+	if (_physics->getPvdConnectionManager() == NULL)
+	{
+		throw Ogre::Exception(42, String("FOOOOS"), String("KAKAAA"));
+	}
+
+	const char*     pvd_host_ip = "127.0.0.1";  // IP of the PC which is running PVD
+	int             port        = 5425;         // TCP port to connect to, where PVD is listening
+	unsigned int    timeout     = 100;          // timeout in milliseconds to wait for PVD to respond,
+												// consoles and remote PCs need a higher timeout.
+	PxVisualDebuggerConnectionFlags connectionFlags = PxVisualDebuggerExt::getAllConnectionFlags();
+	_pvdConnection = PxVisualDebuggerExt::createConnection(_physics->getPvdConnectionManager(),
+		pvd_host_ip, port, timeout, connectionFlags);
+}
+
+
+GameController::~GameController()
+{
+	if (_pvdConnection)
+	{
+		_pvdConnection->release();
+	}
+	_cooking->release();
+	_physics->release();
+	_foundation->release();
+}

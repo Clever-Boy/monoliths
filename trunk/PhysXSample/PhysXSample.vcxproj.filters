@@ -27,6 +27,9 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BoxObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -49,6 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Media\Scene.material">
+      <Filter>Media</Filter>
+    </None>
+    <None Include="Media\doboz.material">
+      <Filter>Media</Filter>
+    </None>
+    <None Include="Media\Phong.material">
+      <Filter>Media</Filter>
+    </None>
+    <None Include="Media\Phong.hlsl">
       <Filter>Media</Filter>
     </None>
   </ItemGroup>

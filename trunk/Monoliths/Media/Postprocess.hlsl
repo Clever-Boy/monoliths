@@ -108,12 +108,13 @@ float4 PS_Compose(float2 p : TEXCOORD0, uniform float4 fogColor) : COLOR
 				samp(p,-1,1,1)+samp(p,0,1,2)+samp(p,1,1,1);
 		float4 G = Gx*Gx+Gy*Gy;
 		
-		G.a /= pow(dh.x, 2.2);
+		G.a /= pow(dh.x, 2.1);
 		G.a = pow(G.a, 0.6);
 		G.a = saturate(G.a);
 		//float bw = G.a*4;
 		//return (float4)bw;
 		
+
 		//G.rgb /=pow(dh.x*0.002, 1.05);
 		float bw = G.r * 0.21f + G.g * 0.39f + G.b * 0.4f + G.a*2;
 		bw /= 4;

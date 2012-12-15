@@ -5,6 +5,9 @@
 using namespace Ogre;
 using namespace OIS;
 
+using namespace physx;
+
+class BoxObject;
 
 class GameController : public OIS::KeyListener, public OIS::MouseListener, public FrameListener
 {
@@ -25,21 +28,58 @@ private:
 	Light* _dirLight0;
 
 	Ogre::Vector3 _lightOrigo;
+	SceneNode* _ninjaNode;
+
+	PxPhysics* _physics;
+	PxFoundation* _foundation;
+	PxDefaultErrorCallback _DefaultErrorCallback;
+	PxDefaultAllocator _DefaultAllocatorCallback;
+	PxCooking* _cooking;
+	PxScene* _scene;
+	PxDefaultCpuDispatcher* _cpuDispatcher;
+	PVD::PvdConnection* _pvdConnection;
+
+	float _simulationAccumulator;
+
+	int _idCounter;
+
+	void initPhysX();
+	void setupPVD();
 
 	void setupScene();
 	void setupRenderTargets();
 
 
+	//PxConvexMesh* createConvexMesh();
+	std::vector<BoxObject*> _boxes;
 public:
+	
+	SceneManager* getSceneManager() 
+	{ 
+		return _sceneManager;
+	}
+
+	PxPhysics* getPhisics()
+	{
+		return _physics;
+	}
+
+	PxScene* getPhisicsScene()
+	{
+		return _scene;
+	}
+
+	String generateId()
+	{
+		return String("object_")+StringConverter::toString(_idCounter++,2);
+	}
+
 	GameController()
-		: _time(0), _pointLight(NULL)
+		: _time(0), _pointLight(NULL), _simulationAccumulator(0), _idCounter(0)
 	{
 	}
 
-	~GameController()
-	{
-		//delete _root;
-	}
+	~GameController();
 
 	void initInputSystem()
 	{
@@ -78,12 +118,36 @@ public:
 		ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
 		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+		initPhysX();
+
 		initInputSystem();
 		setupScene();
 		setupRenderTargets();
+
+		setupPVD();
 		
 		_root->addFrameListener(this);
-		_root->startRendering();
+		//_root->startRendering();
+		doRenderLoop();
+	}
+
+	void doRenderLoop()
+	{
+		while(true)
+		{
+			if(_window->isClosed())
+			{
+				_root->shutdown();
+				break;
+			}
+			WindowEventUtilities::messagePump();
+		
+			if(!_root->renderOneFrame())
+			{
+				_root->shutdown();
+				break;
+			}
+		}
 	}
 
 
@@ -125,19 +189,20 @@ public:
 		return true;
 	}
 
-	void addEntity(Entity* entity, String materialName, float scale = 1, float tx = 0, float ty = 0, float tz = 0)
+	SceneNode* addEntity(Entity* entity, String materialName, float scale = 1, float tx = 0, float ty = 0, float tz = 0)
 	{
 		entity->setMaterialName(materialName);
-		addEntity((MovableObject*)entity, materialName, scale, tx, ty, tz);
+		return addEntity((MovableObject*)entity, materialName, scale, tx, ty, tz);
 	}
 
-	void addEntity(MovableObject* entity, String materialName, float scale = 1, float tx = 0, float ty = 0, float tz = 0)
+	SceneNode* addEntity(MovableObject* entity, String materialName, float scale = 1, float tx = 0, float ty = 0, float tz = 0)
 	{
 		SceneNode* child = _sceneManager->getRootSceneNode()->createChildSceneNode();
 		
 		child->scale(scale, scale, scale);
 		child->translate(tx,ty,tz);
 		child->attachObject(entity);
+		return child;
 	}
 
 	void V(ManualObject* q, float x, float y, float z, Ogre::Vector3 n, float u, float v)

@@ -40,7 +40,7 @@ void World::createLights()
 
 void World::createGameObjects()
 {
-	_ground = new Ground(_mapSize, 200);
+	_ground = new Ground(_mapSize, 500);
 	addGameObject(_ground);
 
 	float avgDistance = 2000;
@@ -48,7 +48,7 @@ void World::createGameObjects()
 	int n = (_mapSize*_mapSize)/(avgDistance*avgDistance);
 
 
-	MonolithGenerator gen(_mapSize, 200, 100, 800, 200, 1.2, 1.5, 0.05, 100);
+	MonolithGenerator gen(_mapSize, 200, 100, 1000, 300, 0.9, 1.5, 0.05, 150);
 
 	for (int i = 0; i < n; i++)
 	{
