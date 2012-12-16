@@ -13,7 +13,7 @@ private:
 	PxPhysics* _physics;
 
 	Ogre::Vector3 _initialPosition;
-
+	
 public:
 
 	BoxObject(float x, float y, float z, GameController* controller)
@@ -26,13 +26,13 @@ public:
 		//_node->setDebugDisplayEnabled(true);
 
 		_node->setPosition(_initialPosition);
-		_physics= controller->getPhisics();
+		_physics= controller->getPhysics();
 		PxMaterial* matcsi = _physics->createMaterial(0.5, 0.5, 0.5);
 		_actor = PxCreateDynamic(*_physics, PxTransform(PxVec3(x,y,z)), PxBoxGeometry(50,50,50), *matcsi, 10 /*,PxTransform(PxVec3(50,50,50))*/);
 		
 		//PxRigidBodyExt::updateMassAndInertia(*_actor,
 		
-		controller->getPhisicsScene()->addActor(*_actor);
+		controller->getPhysicsScene()->addActor(*_actor);
 		//_actor->addForce(PxVec3(1000000,0,0));
 		//_actor->setLinearVelocity(PxVec3(100,0,0));
 	}
