@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "InputListener.h"
 
 using namespace Ogre;
 using namespace OIS;
@@ -8,8 +9,11 @@ using namespace OIS;
 using namespace physx;
 
 class BoxObject;
+class FreeCameraController;
+class NinjaObject;
+class NinjaController;
 
-class GameController : public OIS::KeyListener, public OIS::MouseListener, public FrameListener
+class GameController : public FrameListener
 {
 private:
 	Ogre::Root* _root;
@@ -19,9 +23,6 @@ private:
 	Keyboard* _keyboard;
 	Mouse* _mouse;
 
-	Camera* _camera;
-	OgreBites::SdkCameraMan* _cameraMan;
-
 	float _time;
 
 	Light* _pointLight;
@@ -29,6 +30,7 @@ private:
 
 	Ogre::Vector3 _lightOrigo;
 	SceneNode* _ninjaNode;
+	Viewport* _viewport;
 
 	PxPhysics* _physics;
 	PxFoundation* _foundation;
@@ -37,6 +39,8 @@ private:
 	PxCooking* _cooking;
 	PxScene* _scene;
 	PxDefaultCpuDispatcher* _cpuDispatcher;
+	PxControllerManager* _controllerManager;
+	
 	PVD::PvdConnection* _pvdConnection;
 
 	float _simulationAccumulator;
@@ -46,25 +50,37 @@ private:
 	void initPhysX();
 	void setupPVD();
 
+	void setupViewport();
 	void setupScene();
 	void setupRenderTargets();
 
 
 	//PxConvexMesh* createConvexMesh();
 	std::vector<BoxObject*> _boxes;
+
+	InputListener* _currentInputListener;
+	FreeCameraController* _freeCam1;
+	//FreeCameraController* _freeCam2;
+	NinjaController* _ninjaController;
+	NinjaObject* _ninnya;
 public:
 	
+	PxControllerManager* getPxControllerManager()
+	{
+		return _controllerManager;
+	}
+
 	SceneManager* getSceneManager() 
 	{ 
 		return _sceneManager;
 	}
 
-	PxPhysics* getPhisics()
+	PxPhysics* getPhysics()
 	{
 		return _physics;
 	}
 
-	PxScene* getPhisicsScene()
+	PxScene* getPhysicsScene()
 	{
 		return _scene;
 	}
@@ -75,7 +91,7 @@ public:
 	}
 
 	GameController()
-		: _time(0), _pointLight(NULL), _simulationAccumulator(0), _idCounter(0)
+		: _time(0), _pointLight(NULL), _simulationAccumulator(0), _idCounter(0), _currentInputListener(NULL)
 	{
 	}
 
@@ -95,8 +111,11 @@ public:
 		_keyboard = static_cast<OIS::Keyboard*>(_inputManager->createInputObject( OIS::OISKeyboard, true ));
 		_mouse = static_cast<OIS::Mouse*>(_inputManager->createInputObject( OIS::OISMouse, true ));
 
-		_keyboard->setEventCallback(this);
-		_mouse->setEventCallback(this);
+		
+
+
+		//_keyboard->setEventCallback(this);
+		//_mouse->setEventCallback(this);
 	}
 
 	void start()
@@ -113,6 +132,7 @@ public:
 		_root->setRenderSystem(list.at(0));
 		_root->initialise(false);
 
+		
 		_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
 		_sceneManager = _root->createSceneManager(0, "Default");
 		ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
@@ -121,6 +141,7 @@ public:
 		initPhysX();
 
 		initInputSystem();
+		setupViewport();
 		setupScene();
 		setupRenderTargets();
 
@@ -153,6 +174,21 @@ public:
 
 	virtual bool frameStarted(const FrameEvent& evt);
 
+	void setInputListener(InputListener* inputListener)
+	{
+		if (_currentInputListener != NULL)
+		{
+			_root->removeFrameListener(_currentInputListener);
+		}
+		_currentInputListener = inputListener;
+
+		_root->addFrameListener(_currentInputListener);
+		_keyboard->setEventCallback(_currentInputListener);
+		_mouse->setEventCallback(_currentInputListener);
+
+		_viewport->setCamera(_currentInputListener->getCamera());
+	}
+/*
 	virtual bool frameRenderingQueued(const FrameEvent& evt)
 	{ 
 		_cameraMan->frameRenderingQueued(evt);
@@ -187,7 +223,7 @@ public:
 	{
 		_cameraMan->injectMouseUp(evt, id);
 		return true;
-	}
+	}*/
 
 	SceneNode* addEntity(Entity* entity, String materialName, float scale = 1, float tx = 0, float ty = 0, float tz = 0)
 	{

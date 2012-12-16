@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 #include "GameController.h"
 #include "BoxObject.h"
+#include "NinjaObject.h"
+#include "FreeCameraController.h"
+#include "NinjaController.h"
 
 using namespace Ogre;
 
@@ -31,7 +34,8 @@ void GameController::initPhysX()
 
 	_scene = _physics->createScene(sceneDesc);
 
-	
+	_controllerManager = PxCreateControllerManager(*_foundation);
+
 }
 
 
@@ -40,22 +44,21 @@ void GameController::setupRenderTargets()
 	
 }
 
-void GameController::setupScene()
+void GameController::setupViewport()
 {
-	_camera =  _sceneManager->createCamera("PlayerCam");
-	_camera->setPosition(Ogre::Vector3(0,200, -1000 ));
-	//_camera->lookAt(Ogre::Vector3(0,0,0));
-	_camera->setDirection(Ogre::Vector3::UNIT_Z); 
-	_camera->setNearClipDistance(5);
-	_camera->setFarClipDistance(30000);
-	_cameraMan = new OgreBites::SdkCameraMan(_camera);
+	_freeCam1 = new FreeCameraController(this);
+	//_freeCam2 = new FreeCameraController(this);
 
-	Viewport* viewport = _window->addViewport(_camera);
-	viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
+	_viewport = _window->addViewport(_freeCam1->getCamera());
+	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
 	_window->setActive(true);
 
-	
+	setInputListener(_freeCam1);
+}
 
+void GameController::setupScene()
+{
+	
 	
 	Plane plane(Ogre::Vector3::UNIT_Y, 0);
 	MeshPtr mp = MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -63,12 +66,15 @@ void GameController::setupScene()
 	Entity* entGround = _sceneManager->createEntity(mp);
 	addEntity(entGround, "Rocky");
 
-	Ogre::Entity* entNinja = _sceneManager->createEntity("Ninja", "ninja.mesh");
-	_ninjaNode = addEntity(entNinja, "BuziNinnya");
+	/*Ogre::Entity* entNinja = _sceneManager->createEntity("Ninja", "ninja.mesh");
+	_ninjaNode = addEntity(entNinja, "BuziNinnya");*/
+
+	_ninnya = new NinjaObject(0,0,0, this);
+	_ninjaController = new NinjaController(_ninnya, this);
 
 	PxMaterial* matcsi = _physics->createMaterial(0.5,0.5,0.5);
 	PxRigidStatic* pxPlane = PxCreatePlane(*_physics, PxPlane(PxVec3(0,1,0), 0), *matcsi);
-	_scene->addActor(*pxPlane);
+	_scene->addActor(*pxPlane); 
 
 	/*BoxObject* box1 = new BoxObject(150,0,0, this);
 	_boxes.push_back(box1);
@@ -93,8 +99,7 @@ void GameController::setupScene()
 
 bool GameController::frameStarted(const FrameEvent& evt)
 { 
-	_mouse->capture();
-	_keyboard->capture();
+	
 	
 
 	_time += evt.timeSinceLastEvent;
@@ -112,7 +117,35 @@ bool GameController::frameStarted(const FrameEvent& evt)
 		}
 	}
 
-	_ninjaNode->setPosition(_time*500,0,0);
+	if (_keyboard->isKeyDown(KC_U))
+	{
+		PxCapsuleControllerDesc desc;
+		desc.setToDefault();
+		desc.radius = 30;
+		desc.height = 200;
+		desc.upDirection = PxVec3(0, 1, 0);
+
+		desc.slopeLimit = 0.707;
+		desc.stepOffset = 0.5;
+		desc.callback = NULL;
+		desc.position.set(0,0,0);
+		
+
+		PxControllerManager* cm = PxCreateControllerManager(*_foundation);
+		
+		PxController* c = cm->createController(*_physics, _scene, desc);
+	}
+
+
+	if (_keyboard->isKeyDown(KC_F1))
+	{
+		setInputListener(_freeCam1);
+	}
+
+	if (_keyboard->isKeyDown(KC_F2))
+	{
+		setInputListener(_ninjaController);
+	}
 
 	const float stepSize = 0.01f;
 	_simulationAccumulator+=evt.timeSinceLastFrame;
@@ -122,12 +155,19 @@ bool GameController::frameStarted(const FrameEvent& evt)
 		_simulationAccumulator-=stepSize;
 		_scene->simulate(stepSize);
 		_scene->fetchResults(true);
+
+		for (int i = 0; i < _boxes.size(); i++)
+		{
+			_boxes[i]->update();
+		}
+
+		_ninjaController->update(stepSize);
 	}
 
-	for (int i = 0; i < _boxes.size(); i++)
-	{
-		_boxes[i]->update();
-	}
+	
+
+	_mouse->capture();
+	_keyboard->capture();
 
 	return true; 
 }

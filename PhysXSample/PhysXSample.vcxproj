@@ -59,7 +59,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\debug;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Lib\win32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;PhysX3CHECKED_x86.lib;PhysX3CommonCHECKED_x86.lib;PhysX3ExtensionsCHECKED.lib;PhysX3CookingCHECKED_x86.lib;PhysXVisualDebuggerSDKCHECKED.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain_d.lib;OIS_d.lib;PhysX3CHECKED_x86.lib;PhysX3CommonCHECKED_x86.lib;PhysX3ExtensionsCHECKED.lib;PhysX3CookingCHECKED_x86.lib;PhysXVisualDebuggerSDKCHECKED.lib;PhysX3CharacterKinematicCHECKED_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I
@@ -97,7 +97,11 @@ xcopy "$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Bin\win32\*.dll" "$(OutDir)" 
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BoxObject.h" />
+    <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="GameController.h" />
+    <ClInclude Include="InputListener.h" />
+    <ClInclude Include="NinjaController.h" />
+    <ClInclude Include="NinjaObject.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
