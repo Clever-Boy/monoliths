@@ -9,7 +9,7 @@ class GameObject
 {
 private:
 	SceneManager* _sceneManager;
-	std::vector<MovableObject*> _entities;
+	std::vector<Entity*> _entities;
 	SceneNode* _node;
 	Ogre::Vector3 _position;
 	Ogre::Quaternion _orientation;
@@ -21,12 +21,23 @@ protected:
 		_orientation = orientation;
 	}
 
-	virtual std::vector<MovableObject*> createEntitiesImpl(SceneManager* sceneManager) = 0;
+	virtual void createEntitiesImpl(std::vector<Entity*>& entities, World* world) = 0;
+	virtual float getCtrDetectionExponent()
+	{
+		return 1;
+	}
 
 public:
-	std::vector<MovableObject*> getEntities()
+	/*std::vector<MovableObject*> getEntities()
 	{
 		return _entities;
+	}
+*/
+	typedef std::vector<Entity*>::const_iterator EntityIterator;
+
+	EntityIterator getEntitiesIterator()
+	{
+		return _entities.begin();
 	}
 
 	SceneNode* getNode()

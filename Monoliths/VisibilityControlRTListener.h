@@ -3,7 +3,7 @@
 #include "GameObject.h"
 using namespace Ogre;
 
-class ControlObjectVisibilityListener : public RenderTargetListener
+class VisibilityControlRTListener : public RenderTargetListener
 {
 private:
 	std::vector<MovableObject*> _objects;
@@ -11,17 +11,17 @@ private:
 
 public:
 
-	ControlObjectVisibilityListener(GameObject* gameObject)
+	VisibilityControlRTListener(GameObject* gameObject)
 	{
 		_objects = gameObject->getEntities();
 	}
 
-	ControlObjectVisibilityListener(MovableObject* object)
+	VisibilityControlRTListener(MovableObject* object)
 	{
 		_objects.push_back(object);
 	}
 
-	ControlObjectVisibilityListener(std::vector<MovableObject*> objects)
+	VisibilityControlRTListener(std::vector<MovableObject*> objects)
 	{
 		_objects = objects;
 	}

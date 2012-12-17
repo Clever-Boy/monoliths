@@ -95,7 +95,9 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ControlObjectVisibilityListener.h" />
+    <ClInclude Include="GameController.h" />
+    <ClInclude Include="FreeCameraController.h" />
+    <ClInclude Include="VisibilityControlRTListener.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Monolith.h" />
@@ -103,7 +105,7 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="World.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="GameController.h" />
+    <ClInclude Include="Game.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp" />
@@ -113,7 +115,7 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="Game.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico" />

@@ -1,13 +1,15 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
-#include "Ground.h"
+//#include "Ground.h"
 
 using namespace Ogre;
 
 extern "C" {
-	void KAKA(String msg);
+	void LOG(String msg);
 }
+
+class Ground;
 
 class World
 {
@@ -19,6 +21,14 @@ private:
 
 	Ground* _ground;
 	float _mapSize;
+
+	typedef union
+	{
+		float f;
+		int i;
+	} ShaderObjectID;
+
+	float _shaderObjectIdCounter;
 
 	void createGameObjects();
 	void createLights();
@@ -42,7 +52,12 @@ public:
 	World(SceneManager* sceneManager, float mapSize) 
 		: _sceneManager(sceneManager), _idCounter(0), _mapSize(mapSize)
 	{
+		_shaderObjectIdCounter = 0;
 		_rootNode = _sceneManager->getRootSceneNode();
+	}
+
+	void update(float totalTime, float dt)
+	{
 	}
 
 	void init()
@@ -52,9 +67,16 @@ public:
 		initGameObjects();
 	}
 
-	String getNextId()
+	String getNextId(String prefix = "object")
 	{
-		return String("gameObject")+StringConverter::toString(_idCounter++,2);
+		return prefix+ String("_")+StringConverter::toString(_idCounter++,3);
+	}
+
+	float getNexShaderObjectId()
+	{
+		//_shaderObjectIdCounter.i++;
+		_shaderObjectIdCounter+=0.001;
+		return _shaderObjectIdCounter;
 	}
 
 	SceneManager* getSceneManager()
@@ -65,18 +87,5 @@ public:
 	Ground* getGround()
 	{
 		return _ground;
-	}
-	
-	std::vector<GameObject*> getAllExceptGround()
-	{
-		std::vector<GameObject*> result;
-		for (int i = 0; i < _gameObjects.size(); i++)
-		{
-			if (_gameObjects[i] != _ground)
-			{
-				result.push_back(_gameObjects[i]);
-			}
-		}
-		return result;
 	}
 };

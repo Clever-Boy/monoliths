@@ -69,7 +69,7 @@ abstract material PhongToonshadeOnlySpecular
 		{
 			ambient $ambient
 			diffuse $diffuse
-			specular $specular
+			specular 0 0 0 1
 
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_Phong { }
@@ -87,6 +87,13 @@ abstract material PhongToonshadeOnlySpecular
 
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_PhongToonshadeSpecular { }
+
+			texture_unit shadowmap
+			{
+				content_type shadow
+				tex_address_mode clamp
+				filtering bilinear
+			} 
 		}
 	}
 
@@ -109,7 +116,7 @@ abstract material PhongTextured
 		{
 			ambient $ambient
 			diffuse $diffuse
-			specular $specular
+			specular 0 0 0 1
 
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_Phong { }
@@ -133,6 +140,13 @@ abstract material PhongTextured
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_PhongToonshadeTextured { }
 
+			texture_unit shadowmap
+			{
+				content_type shadow
+				tex_address_mode clamp
+				filtering bilinear
+			} 
+
 			texture_unit
 			{
 				//tex_address_mode mirror
@@ -152,8 +166,7 @@ abstract material PhongTextured
 	}
 }
 
-
-material compose
+material contour
 {
 	technique
 	{
@@ -162,13 +175,12 @@ material compose
 			cull_hardware none
 			cull_software none
 			depth_func always_pass
-			fog_colour 0.0 0.0 0.0 1
-
+			
 			vertex_program_ref VS_Quad
 			{
 			}
 
-			fragment_program_ref PS_Compose 
+			fragment_program_ref PS_Contour
 			{ 
 			}
 
@@ -184,9 +196,53 @@ material compose
 				tex_address_mode clamp
 			}
 
+		}
+	}
+}
+
+material compose
+{
+	technique
+	{
+		pass
+		{
+			cull_hardware none
+			cull_software none
+			depth_func always_pass
+
+			vertex_program_ref VS_Quad
+			{
+			}
+
+			fragment_program_ref PS_Compose 
+			{ 
+			}
+
 			texture_unit
 			{
-				filtering none
+				filtering anisotropic
+				max_anisotropy 16
+				tex_address_mode clamp
+			}
+
+			texture_unit
+			{
+				filtering anisotropic
+				max_anisotropy 16
+				tex_address_mode clamp
+			}
+
+			texture_unit
+			{
+				filtering anisotropic
+				max_anisotropy 16
+				tex_address_mode clamp
+			}
+
+			texture_unit
+			{
+				filtering anisotropic
+				max_anisotropy 16
 				tex_address_mode clamp
 			}
 		}

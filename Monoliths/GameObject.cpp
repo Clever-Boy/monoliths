@@ -6,16 +6,27 @@
 void GameObject::init(World* world)
 {
 	_sceneManager = world->getSceneManager();
-	_entities = createEntitiesImpl(_sceneManager);
+	createEntitiesImpl(_entities, world);
 	_node = _sceneManager->getRootSceneNode()->createChildSceneNode();
-		
-	for (int i = 0; i < _entities.size(); i++)
+	
+	float objectId = world->getNexShaderObjectId();
+
+	for (auto i = _entities.begin(); i != _entities.end(); i++)
 	{
-		MovableObject* obj = _entities[i];
 		SceneNode* child = _node->createChildSceneNode(world->getNextId());
-		child->attachObject(obj);
-	}
+		//(*i)->getSubEntity(0)->setCustomParameter(0, Ogre::Vector4(getCtrDetectionExponent()));
+
+		for (int j = 0; j < (*i)->getNumSubEntities();j++)
+		{
+			(*i)->getSubEntity(j)->setCustomParameter(0, Ogre::Vector4(objectId));
+		}
+		child->attachObject(*i);
+		(*i)->setCastShadows(true);
 		
+	}
+
+	//Entity*e;
+	
 	_node->setPosition(_position);
 	_node->setOrientation(_orientation);
 }
