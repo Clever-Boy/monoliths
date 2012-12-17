@@ -21,23 +21,13 @@ struct VERTEX_OUT
 
 	float3 EyeDir : TEXCOORD2;
 	//float2 DepthHeight : TEXCOORD3;
-	float3 LightDir[MAX_LIGHT_COUNT] : TEXCOORD3;
+	float4 LightPos : TEXCOORD3;
+	float3 LightDir[MAX_LIGHT_COUNT] : TEXCOORD4;
 };
 
 float3 CalcLightDir(float3 worldPos, float4 lightPos)
 {	
 	return lightPos.xyz - worldPos*lightPos.w;
-}
-
-float Fog(float2 c)
-{
-	const float2 FOG_START = float2(10000, 300);
-	const float2 FOG_END = float2(100000, 3000);
-	const float2 FOG_EXPONENT = float2(0.2, 0.2);
-
-	c = saturate((c-FOG_START)/(FOG_END-FOG_START));
-	c = pow(c, FOG_EXPONENT);
-	return length(c);
 }
 
 
@@ -47,7 +37,8 @@ VERTEX_OUT VS_Phong(in VERTEX_IN v,
 					   uniform float4x4 worldIT,
 					   uniform float4 cameraPosition,
 					   uniform float4 lightPositions[MAX_LIGHT_COUNT],
-					   uniform float lightCount
+					   uniform float lightCount,
+					   uniform float4 lightMatrix
 					   ) 
 {
 	VERTEX_OUT res = (VERTEX_OUT)0;
@@ -65,7 +56,10 @@ VERTEX_OUT VS_Phong(in VERTEX_IN v,
 	}
 	
 	res.Texture = v.Texture;
+	res.LightPos = mul(lightMatrix,v.Position);
 	
+	//res.Position = res.LightPos;
+
 	//res.DepthHeight.x = -mul(v.Position, worldView).z;
 	//res.DepthHeight.y = worldPos.y;
 	//float2 c = float2(-mul(v.Position, worldView).z, worldPos.y);
@@ -160,6 +154,19 @@ void AddDiffuseSpecular(float3 lightDir,
 }
 
 
+uniform sampler2D shadowmap : register(s0);
+uniform sampler2D tex : register(s1);
+uniform float4 ambient;
+uniform float4 ambientLight;
+uniform float4 diffuse;
+uniform float4 specular;
+uniform float shininess;
+
+uniform float4 lightDiffuse[MAX_LIGHT_COUNT];
+uniform float4 lightSpecular[MAX_LIGHT_COUNT];
+uniform float4 lightAttenuation[MAX_LIGHT_COUNT];
+uniform float lightCount;
+
 void SumDiffuseSpecularForAllLights(VERTEX_OUT v,
 						float4 lightDiffuse[MAX_LIGHT_COUNT],
 						float4 lightSpecular[MAX_LIGHT_COUNT],
@@ -184,22 +191,25 @@ void SumDiffuseSpecularForAllLights(VERTEX_OUT v,
 							difSum, specSum);
 	}
 	difSum /= lightCount;
+
+
+	//float shadow = 1;
+	//if(v.LightPos.z > 0)
+	//{
+		//v.LightPos /= v.LightPos.w;
+		//shadow = tex2D(shadowmap, v.LightPos.xy);
+	//}
+	//difSum*=v.LightPos.z;
+	//difSum*=shadow;
+	//specSum*=shadow;
+	
 }
 
 
-float4 PS_Phong(VERTEX_OUT v,
-				  uniform float4 ambient,
-				  uniform float4 ambientLight,
-				  uniform float4 diffuse,
-				  uniform float4 specular,
-				  uniform float shininess,
 
-				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
-				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
-				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
-				  uniform float lightCount
-				  ) : COLOR0
+float4 PS_Phong(VERTEX_OUT v) : COLOR0
 {
+	//return v.LightPos
 	float4 difSum, specSum;
 	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, false, difSum, specSum);
 
@@ -208,19 +218,7 @@ float4 PS_Phong(VERTEX_OUT v,
 	return c;
 }
 
-float4 PS_PhongTextured(VERTEX_OUT v,
-				  uniform sampler2D tex : register(s0),
-				  uniform float4 ambient,
-				  uniform float4 ambientLight,
-				  uniform float4 diffuse,
-				  uniform float4 specular,
-				  uniform float shininess,
-
-				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
-				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
-				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
-				  uniform float lightCount
-				  ) : COLOR0
+float4 PS_PhongTextured(VERTEX_OUT v) : COLOR0
 {
 	float4 difSum, specSum;
 	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, false, difSum, specSum);
@@ -231,18 +229,7 @@ float4 PS_PhongTextured(VERTEX_OUT v,
 	return c;
 }
 
-float4 PS_PhongToonshade(VERTEX_OUT v,
-				  uniform float4 ambient,
-				  uniform float4 ambientLight,
-				  uniform float4 diffuse,
-				  uniform float4 specular,
-				  uniform float shininess,
-
-				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
-				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
-				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
-				  uniform float lightCount
-				  ) : COLOR0
+float4 PS_PhongToonshade(VERTEX_OUT v) : COLOR0
 {
 	float4 difSum, specSum;
 	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, true, difSum, specSum);
@@ -250,18 +237,7 @@ float4 PS_PhongToonshade(VERTEX_OUT v,
 	return (ambient*ambientLight + difSum*diffuse + specSum*specular)*float4(1,1,1, 0.1);
 }
 
-float4 PS_PhongToonshadeSpecular(VERTEX_OUT v,
-				  uniform float4 ambient,
-				  uniform float4 ambientLight,
-				  uniform float4 diffuse,
-				  uniform float4 specular,
-				  uniform float shininess,
-
-				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
-				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
-				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
-				  uniform float lightCount
-				  ) : COLOR0
+float4 PS_PhongToonshadeSpecular(VERTEX_OUT v) : COLOR0
 {
 	float4 difSum, specSum;
 	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, false, true, difSum, specSum);
@@ -271,39 +247,11 @@ float4 PS_PhongToonshadeSpecular(VERTEX_OUT v,
 
 
 
-float4 PS_PhongToonshadeTextured(VERTEX_OUT v,
-				  uniform sampler2D tex : register(s0),
-				  uniform float4 ambient,
-				  uniform float4 ambientLight,
-				  uniform float4 diffuse,
-				  uniform float4 specular,
-				  uniform float shininess,
-
-				  uniform float4 lightDiffuse[MAX_LIGHT_COUNT],
-				  uniform float4 lightSpecular[MAX_LIGHT_COUNT],
-				  uniform float4 lightAttenuation[MAX_LIGHT_COUNT],
-				  uniform float lightCount
-				  ) : COLOR0
+float4 PS_PhongToonshadeTextured(VERTEX_OUT v) : COLOR0
 {
 	float4 difSum, specSum;
 	SumDiffuseSpecularForAllLights(v,lightDiffuse,lightSpecular,lightAttenuation,shininess,lightCount, true, true, difSum, specSum);
 	
 	float4 texel = tex2D(tex, v.Texture);
 	return texel*(ambient*ambientLight + difSum*diffuse) + specSum*specular;
-}
-
-float Fog(float c)
-{
-	const float FOG_START = 10000;
-	const float FOG_END = 100000;
-	const float FOG_EXPONENT = 0.2;
-	if (c == 0)
-	{
-		return 1;
-	}
-	else
-	{
-		c = saturate((c-FOG_START)/(FOG_END-FOG_START));
-		return pow(c, FOG_EXPONENT);
-	}
 }

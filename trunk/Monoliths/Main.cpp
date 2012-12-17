@@ -1,13 +1,12 @@
 #include "stdafx.h"
-#include "GameController.h"
+#include "Game.h"
 
 extern "C" {
     INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
     {
         try 
 		{
-            GameController toy;
-			toy.start();
+			Game().start();
         } 
 		catch( Ogre::Exception& e ) 
 		{

@@ -16,6 +16,8 @@ vertex_program VS_Phong hlsl
 		param_named_auto cameraPosition camera_position
 		param_named_auto lightPositions light_position_array 4
 		param_named_auto lightCount light_count
+
+		param_named_auto lightMatrix texture_viewproj_matrix 0
 	}
 }
 
@@ -87,6 +89,7 @@ fragment_program PS_PhongToonshade hlsl
 		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
 		param_named_auto lightAttenuation light_attenuation_array 4
 		param_named_auto lightCount light_count
+
 	}
 }
 
@@ -110,6 +113,8 @@ fragment_program PS_PhongToonshadeSpecular hlsl
 		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
 		param_named_auto lightAttenuation light_attenuation_array 4
 		param_named_auto lightCount light_count
+
+
 	}
 }
 
@@ -134,6 +139,9 @@ fragment_program PS_PhongToonshadeTextured hlsl
 		param_named_auto lightSpecular light_specular_colour_power_scaled_array 4
 		param_named_auto lightAttenuation light_attenuation_array 4
 		param_named_auto lightCount light_count
+
+
+
 	}
 }
 
@@ -151,6 +159,19 @@ vertex_program VS_Quad hlsl
 	}
 }
 
+fragment_program PS_Contour hlsl
+{
+	source Postprocess.hlsl
+	entry_point PS_Contour
+	target ps_3_0
+	optimisation_level none
+
+	default_params
+	{
+		param_named_auto viewportSize viewport_size
+	}
+}
+
 fragment_program PS_Compose hlsl
 {
 	source Postprocess.hlsl
@@ -160,8 +181,8 @@ fragment_program PS_Compose hlsl
 
 	default_params
 	{
+		//param_named_auto fogColor fog_colour
 		param_named_auto viewportSize viewport_size
-		param_named_auto fogColor fog_colour
 	}
 }
 
@@ -187,4 +208,9 @@ fragment_program PS_DepthMap hlsl
 	entry_point PS_DepthMap
 	target ps_3_0
 	optimisation_level none
+
+	default_params
+	{
+		param_named_auto objectId custom 0
+	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "GameObject.h"
+#include "World.h"
 
 class Ground : public GameObject
 {
@@ -18,11 +19,12 @@ public:
 
 protected:
 	
-	virtual std::vector<MovableObject*> createEntitiesImpl(SceneManager* sceneManager)
+	virtual void createEntitiesImpl(std::vector<Entity*>& entities, World* world)
 	{
 		float tile = _size / _textureSize;
 		int segments = (int)(tile*_segmentMultiplicator);
-
+		
+		SceneManager* sceneManager = world->getSceneManager();
 
 		Plane plane(Ogre::Vector3::UNIT_Y, 0);
 		MeshPtr mp = MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -30,8 +32,11 @@ protected:
 		Entity* entity = sceneManager->createEntity(mp);
 		entity->setMaterialName("Ground");
 
-		std::vector<MovableObject*> result;
-		result.push_back(entity);
-		return result;
+		entities.push_back(entity);
+	}
+
+	virtual float getCtrDetectionExponent()
+	{
+		return 2.2;
 	}
 };

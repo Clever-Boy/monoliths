@@ -16,12 +16,12 @@ public:
 
 protected:
 
-	virtual std::vector<MovableObject*> createEntitiesImpl(SceneManager* sceneManager)
+	virtual void createEntitiesImpl(std::vector<Entity*>& entities, World* world)
 	{
-		std::vector<MovableObject*> entities;
 		ManualObject* cube = createCubeMesh("kaka", "Monolith", _a, _b, _c);
-		entities.push_back(cube);
-		return entities;
+		MeshPtr mesh = cube->convertToMesh(world->getNextId("mesh"));
+		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("monolith"), mesh);
+		entities.push_back(entity);
 	}
 	
 	void V(ManualObject* q, float x, float y, float z, Ogre::Vector3 n, float u, float v)
@@ -68,5 +68,10 @@ protected:
 
 		return q;
 
+	}
+
+	virtual float getCtrDetectionExponent()
+	{
+		return 2.2;
 	}
 };

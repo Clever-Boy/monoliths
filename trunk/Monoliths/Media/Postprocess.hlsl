@@ -36,15 +36,17 @@ DEPTH_MAP_OUT VS_DepthMap(VERTEX_IN v, uniform float4x4 worldViewProj, uniform f
 	return res;
 }
 
-float4 PS_DepthMap(DEPTH_MAP_OUT p) : COLOR
+float4 PS_DepthMap(DEPTH_MAP_OUT p, uniform float objectId) : COLOR
 {
 	float2 d = p.DepthHeight;		
-	return float4(d.x,d.y,0,0);
+	return float4(d.x,d.y,objectId,0);
 }
 
 uniform sampler2D original : register(s0);
-uniform sampler2D toonshaded : register(s1);
-uniform sampler2D depthmap : register(s2);
+uniform sampler2D depthmap : register(s1);
+uniform sampler2D toonshaded : register(s2);
+uniform sampler2D contour : register(s3);
+
 uniform float4 viewportSize;
 
 float4 samp(float2 p, float dx, float dy, float s)
@@ -61,17 +63,16 @@ float4 samp(float2 p, float dx, float dy, float s)
 	return c;
 }
 
+
 float4 MiniWindow(float4 c)
 {
 	return c;
-	
 }
-
 
 float Fog(float2 dh)
 {
 	const float2 FOG_START = float2(3000, 800);
-	const float2 FOG_END = float2(35000, 6000);
+	const float2 FOG_END = float2(35000, 8000);
 	const float2 FOG_EXPONENT = float2(0.7, 0.9);
 	if (dh.x == 0)
 	{
@@ -86,8 +87,105 @@ float Fog(float2 dh)
 	}
 }
 
-float4 PS_Compose(float2 p : TEXCOORD0, uniform float4 fogColor) : COLOR
+float GetId(float2 p)
 {
+	return tex2D(depthmap, p).b;
+}
+
+bool IsObjContour(float2 p)
+{
+	const float S = 1.0;
+	const float2 Kernel[8] = 
+	{
+		{-1,-1}, {0,-1}, {1,-1},
+		{-1,0},          {1,0},
+		{-1,1}, {0,1}, {1,1},
+	};
+
+	float id = GetId(p);
+	int res = 0;
+	for (int i=0;i<8;i++)
+	{
+		if (GetId(p+Kernel[i]*viewportSize.zw*S) != id) return true;
+	}
+	return false;
+}
+
+float4 PS_Contour(float2 p : TEXCOORD0) : COLOR
+{
+	float2 dh = tex2D(depthmap, p).rg;
+	
+	float4 Gx = samp(p,-1,-1,-1)+samp(p,1,-1,1) +
+			samp(p,-1,0,-2)+samp(p,1,0,2) +
+			samp(p,-1,1,-1)+samp(p,1,1,1);
+	
+	float4 Gy = samp(p,-1,-1,-1)+samp(p,0,-1,-2)+samp(p,1,-1,-1)+
+			samp(p,-1,1,1)+samp(p,0,1,2)+samp(p,1,1,1);
+	float4 G = Gx*Gx+Gy*Gy;
+		
+	if (!IsObjContour(p))
+	{
+		G.a /= pow(dh.x, 2.5);
+	}
+	//G.a /= pow(dh.x, 1.8);
+	G.a = 2*pow(G.a, 0.6);
+
+	//G.rgb /=pow(dh.x*0.0001, 0.3);
+	G.rgb*=100;
+	float bw = G.r * 0.21f + G.g * 0.39f + G.b * 0.4f + G.a;
+
+	return saturate(bw);
+}
+
+float4 BlurContour(float2 p)
+{
+	const float S = 0.5;
+	const float2 PixelKernel[9] = 
+	{
+		{-1,-1}, {0,-1}, {1,-1},
+		{-1,0}, {0,0}, {1,0},
+		{-1,1}, {0,1}, {1,1},
+	};
+
+	float BlurWeights[9] = 
+	{
+		0.1, 0.1, 0.1,
+		0.1, 0.4, 0.1,
+		0.1, 0.1, 0.1
+	};
+
+	float4 c = (float4)0;
+	for (int i=0;i<9;i++)
+	{
+		c+= tex2D(contour, p+S*PixelKernel[i]*viewportSize.zw)*BlurWeights[i];
+	}
+	return saturate(c);
+}
+
+float2 NearestDHAroundPixel(float2 p)
+{
+	const float2 PixelKernel[9] = 
+	{
+		{-1,-1}, {0,-1}, {1,-1},
+		{-1,0}, {0,0}, {1,0},
+		{-1,1}, {0,1}, {1,1},
+	};
+
+	
+	float2 texSize = float2(1 / viewportSize.x, 1/viewportSize.y);
+	float2 nearestDH = float2(100000,0);
+	for (int i=0;i<9;i++)
+	{
+		float2 val = tex2D(depthmap, p+PixelKernel[i]*texSize).xy; // xy == depth,height (DH)
+		if (val.x != 0 && val.x<nearestDH.x) nearestDH = val;
+	}
+	return nearestDH;
+}
+
+float4 PS_Compose(float2 p : TEXCOORD0) : COLOR
+{
+	static const float4 fogColor = float4(0.8, 0.8, 0.8, 1);
+
 	if (p.x>0.75 && p.y>0.75)
 	{
 		p-=float2(0.75, 0.75);
@@ -97,40 +195,15 @@ float4 PS_Compose(float2 p : TEXCOORD0, uniform float4 fogColor) : COLOR
 	}
 	else
 	{
-		//float depth = tex2D(original, p).a;
-		float2 dh = tex2D(depthmap, p).rg;
-		
-		float4 Gx = samp(p,-1,-1,-1)+samp(p,1,-1,1) +
-				samp(p,-1,0,-2)+samp(p,1,0,2) +
-				samp(p,-1,1,-1)+samp(p,1,1,1);
-	
-		float4 Gy = samp(p,-1,-1,-1)+samp(p,0,-1,-2)+samp(p,1,-1,-1)+
-				samp(p,-1,1,1)+samp(p,0,1,2)+samp(p,1,1,1);
-		float4 G = Gx*Gx+Gy*Gy;
-		
-		G.a /= pow(dh.x, 2.1);
-		G.a = pow(G.a, 0.6);
-		G.a = saturate(G.a);
-		//float bw = G.a*4;
-		//return (float4)bw;
-		
 
-		//G.rgb /=pow(dh.x*0.002, 1.05);
-		float bw = G.r * 0.21f + G.g * 0.39f + G.b * 0.4f + G.a*2;
-		bw /= 4;
-		
-		bw = 1-saturate(bw);
+		float bw = 1-BlurContour(p).x;
+		//return bw;
 
 		float4 pix = tex2D(toonshaded, p);
 		pix.rgb*=bw;
-
-		//return pix;
-
-		fogColor = float4(0.8, 0.8, 0.8, 1);
-
+		
+		float2 dh = NearestDHAroundPixel(p);
 		float fog = Fog(dh);
 		return lerp(pix, fogColor, fog);
-
-		//return pix;
 	}
 }

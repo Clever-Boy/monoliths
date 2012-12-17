@@ -7,7 +7,7 @@
 using namespace Ogre;
 
 extern "C" {
-	void KAKA(String msg)
+	void LOG(String msg)
 	{
 		LogManager::getSingleton().getDefaultLog()->logMessage(msg);
 	}
@@ -30,12 +30,19 @@ void World::createLights()
 	light1->setDirection(1.2, -0.4, 0.8);
 	light1->setDiffuseColour(1, 1, 1);
 	light1->setSpecularColour(0.3, 0.3, 0.3);
+	light1->setCastShadows(true);
+	light1->setShadowFarDistance(1000);
 
 	Light* light2 = _sceneManager->createLight("dirLight2");
 	light2->setType(Light::LT_DIRECTIONAL);
 	light2->setDirection(-1, -0.4, -0.3);
 	light2->setDiffuseColour(0.3, 0.3, 0.3);
 	light2->setSpecularColour(0.1, 0.1, 0.1);
+	light2->setCastShadows(false);
+
+	
+	_sceneManager->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
+	_sceneManager->setShadowFarDistance(10000);
 }
 
 void World::createGameObjects()
