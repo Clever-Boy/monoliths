@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "GameObject.h"
 //#include "Ground.h"
+#include "PhysicsManager.h";
 
 using namespace Ogre;
 
@@ -15,6 +16,7 @@ class World
 {
 private:
 	SceneManager* _sceneManager;
+	PhysicsManager* _physicsManager;
 	SceneNode* _rootNode;
 	std::vector<GameObject*> _gameObjects;
 	int _idCounter;
@@ -49,15 +51,31 @@ private:
 
 public:
 
-	World(SceneManager* sceneManager, float mapSize) 
-		: _sceneManager(sceneManager), _idCounter(0), _mapSize(mapSize)
+	World(SceneManager* sceneManager, PhysicsManager* physicsManager, float mapSize) 
+		: _sceneManager(sceneManager),
+		_physicsManager(physicsManager),
+		_idCounter(0), 
+		_mapSize(mapSize)
 	{
+		_physicsManager = physicsManager;
 		_shaderObjectIdCounter = 0;
 		_rootNode = _sceneManager->getRootSceneNode();
 	}
 
+	void act(float totalTime, float dt)
+	{
+		for (auto i = _gameObjects.begin();i != _gameObjects.end(); i++)
+		{
+			(*i)->act(this, totalTime, dt);
+		}
+	}
+
 	void update(float totalTime, float dt)
 	{
+		for (auto i = _gameObjects.begin(); i != _gameObjects.end(); i++)
+		{
+			(*i)->update(this, totalTime, dt);
+		}
 	}
 
 	void init()
@@ -77,6 +95,11 @@ public:
 		//_shaderObjectIdCounter.i++;
 		_shaderObjectIdCounter+=0.001;
 		return _shaderObjectIdCounter;
+	}
+
+	PhysicsManager* getPhysicsManager()
+	{
+		return _physicsManager;
 	}
 
 	SceneManager* getSceneManager()

@@ -19,8 +19,7 @@
 
 #include <Ogre.h>
 #include <OIS.h>
-#include <Terrain/OgreTerrain.h>
-#include <Terrain/OgreTerrainGroup.h>
-
+//#include <Terrain/OgreTerrain.h>
+//#include <Terrain/OgreTerrainGroup.h>
 #include <SdkCameraMan.h>
-// TODO: reference additional headers your program requires here
+#include <PxPhysicsAPI.h>

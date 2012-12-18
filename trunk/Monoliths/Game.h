@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "World.h"
 #include "GameController.h"
+#include "PhysicsManager.h"
 
 using namespace Ogre;
 using namespace OIS;
@@ -22,12 +23,15 @@ private:
 	Camera* _freeCamera;
 	OgreBites::SdkCameraMan* _cameraMan;
 
+	static const float STEP_TIME;
+	float _simulationAccumulator;
 	float _totalTime;
 
 	Light* _dirLight0;
 
 	CompositorInstance* _compie;
 	
+	PhysicsManager* _physicsManager;
 	World* _world;
 	std::vector<GameController*> _controllers;
 	GameController* _activeController;
@@ -47,13 +51,16 @@ private:
 public:
 	Game()
 		: _totalTime(0),
+		  _simulationAccumulator(0),
 		  _activeController(NULL)
 	{
 	}
 
-	~Game()
+	~Game();
+
+	PhysicsManager* getPhysicsManager()
 	{
-		//delete _root;
+		return _physicsManager;
 	}
 
 	World* getWorld()
@@ -86,37 +93,7 @@ public:
 		_controllers.push_back(controller);
 	}
 	
-	void start()
-	{
-		String pluginsCfg =
-#ifdef _DEBUG
-			"plugins_d.cfg";
-#else
-			"plugins.cfg";
-#endif
-		_root = new Ogre::Root(pluginsCfg);
-		
-		RenderSystemList list = _root->getAvailableRenderers(); 
-		_root->setRenderSystem(list.at(0));
-		_root->initialise(false);
-
-		NameValuePairList misc;
-		misc["FSAA"] = "8";
-		_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
-		_sceneManager = _root->createSceneManager(0, "Default");
-		ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
-		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-
-		
-
-		setupRenderSystem();
-		setupWorld();
-		setupInputSystem();
-		
-		_root->addFrameListener(this);
-		doRenderLoop();
-	}
-
+	void start();
 	void doRenderLoop()
 	{
 		while(true)

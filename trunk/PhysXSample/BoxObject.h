@@ -29,7 +29,7 @@ public:
 		_physics= controller->getPhysics();
 		PxMaterial* matcsi = _physics->createMaterial(0.5, 0.5, 0.5);
 		_actor = PxCreateDynamic(*_physics, PxTransform(PxVec3(x,y,z)), PxBoxGeometry(50,50,50), *matcsi, 10 /*,PxTransform(PxVec3(50,50,50))*/);
-		
+
 		//PxRigidBodyExt::updateMassAndInertia(*_actor,
 		
 		controller->getPhysicsScene()->addActor(*_actor);

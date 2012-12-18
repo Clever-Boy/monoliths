@@ -4,6 +4,39 @@
 
 using namespace Ogre;
 
+const float Game::STEP_TIME = 0.01;
+
+void Game::start()
+{
+		String pluginsCfg =
+#ifdef _DEBUG
+			"plugins_d.cfg";
+#else
+			"plugins.cfg";
+#endif
+		_root = new Ogre::Root(pluginsCfg);
+		
+		RenderSystemList list = _root->getAvailableRenderers(); 
+		_root->setRenderSystem(list.at(0));
+		_root->initialise(false);
+
+		NameValuePairList misc;
+		misc["FSAA"] = "8";
+		_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
+		_sceneManager = _root->createSceneManager(0, "Default");
+		ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
+		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+
+		_physicsManager = new PhysicsManager();
+
+		setupRenderSystem();
+		setupWorld();
+		setupInputSystem();
+		_physicsManager->setupPVD();
+
+		_root->addFrameListener(this);
+		doRenderLoop();
+	}
 
 
 void Game::setupRenderSystem()
@@ -23,7 +56,7 @@ void Game::setupRenderSystem()
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, 40000);
+	_world = new World(_sceneManager, _physicsManager, 40000);
 	_world->init();
 }
 
@@ -70,9 +103,25 @@ bool Game::doUpdate(const FrameEvent& evt)
 	}
 
 	_activeController->onUpdating(evt, this);
+
+	
+	_simulationAccumulator += evt.timeSinceLastFrame;
+	
+	if (_simulationAccumulator >= STEP_TIME)
+	{
+		_simulationAccumulator -= STEP_TIME;
+		_world->act(_totalTime, STEP_TIME);
+		_physicsManager->simulate(STEP_TIME);
+		_world->update(_totalTime, STEP_TIME);
+	}
+
 	_world->update(_totalTime, evt.timeSinceLastEvent);
 	_activeController->onUpdated(evt, this);
 
 	return true; 
 }
 
+Game::~Game()
+{
+	delete _physicsManager;
+}
