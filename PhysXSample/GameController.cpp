@@ -148,7 +148,7 @@ bool GameController::frameStarted(const FrameEvent& evt)
 	}
 
 	const float stepSize = 0.01f;
-	_simulationAccumulator+=evt.timeSinceLastFrame;
+	_simulationAccumulator += evt.timeSinceLastFrame;
 	
 	if (_simulationAccumulator>=stepSize)
 	{

@@ -3,30 +3,65 @@
 #include "GameObject.h"
 #include "World.h"
 
+void GameObjectElement::init(SceneNode* node, World* world)
+{
+	this->node = node;
+	if (entity != NULL)
+	{
+		node->attachObject(entity);
+	}
+	node->setPosition(position);
+	node->setOrientation(orientation);
+
+	if (actor != NULL)
+	{
+		//PxQuat pxOrientation = PxQuat::createIdentity();
+		PxQuat pxOrientation =  PxQuat(orientation.x, orientation.y, orientation.z, orientation.w);
+		PxTransform transform = PxTransform(PxVec3(position.x, position.y, position.z), pxOrientation);
+		actor->setGlobalPose(transform);
+
+		world->getPhysicsManager()->addActor(actor);
+	}
+}
+
+void GameObjectElement::updateNode()
+{
+	if (actor != NULL)
+	{
+		PxTransform &transform = actor->getGlobalPose();
+		PxQuat q = transform.q;
+		PxVec3 p = transform.p;
+		node->setOrientation(q.w, q.x, q.y, q.z);
+		node->setPosition(p.x, p.y, p.z);
+	}
+}
+
 void GameObject::init(World* world)
 {
 	_sceneManager = world->getSceneManager();
-	createEntitiesImpl(_entities, world);
-	_node = _sceneManager->getRootSceneNode()->createChildSceneNode();
-	
-	float objectId = world->getNexShaderObjectId();
-
-	for (auto i = _entities.begin(); i != _entities.end(); i++)
+	initImpl(world);
+	if (_elements.size() > 0)
 	{
-		SceneNode* child = _node->createChildSceneNode(world->getNextId());
-		//(*i)->getSubEntity(0)->setCustomParameter(0, Ogre::Vector4(getCtrDetectionExponent()));
+		_node = _sceneManager->getRootSceneNode()->createChildSceneNode();
+		float objectId = world->getNexShaderObjectId();
 
-		for (int j = 0; j < (*i)->getNumSubEntities();j++)
+		for (auto i = _elements.begin(); i != _elements.end(); i++)
 		{
-			(*i)->getSubEntity(j)->setCustomParameter(0, Ogre::Vector4(objectId));
-		}
-		child->attachObject(*i);
-		(*i)->setCastShadows(true);
-		
-	}
+			SceneNode* child = _node->createChildSceneNode(world->getNextId("object_"));
+			(*i).init(child, world);
 
-	//Entity*e;
-	
-	_node->setPosition(_position);
-	_node->setOrientation(_orientation);
+			for (int j = 0; j < (*i).entity->getNumSubEntities();j++)
+			{
+				(*i).entity->getSubEntity(j)->setCustomParameter(0, Ogre::Vector4(objectId));
+			}
+		}
+	}
+}
+
+void GameObject::update(World* world, float totalTime, float dt)
+{
+	for (auto i = _elements.begin(); i != _elements.end(); i++)
+	{
+		(*i).updateNode();
+	}
 }

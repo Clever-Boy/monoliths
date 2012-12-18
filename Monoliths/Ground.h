@@ -19,7 +19,7 @@ public:
 
 protected:
 	
-	virtual void createEntitiesImpl(std::vector<Entity*>& entities, World* world)
+	virtual void initImpl(World* world)
 	{
 		float tile = _size / _textureSize;
 		int segments = (int)(tile*_segmentMultiplicator);
@@ -32,7 +32,12 @@ protected:
 		Entity* entity = sceneManager->createEntity(mp);
 		entity->setMaterialName("Ground");
 
-		entities.push_back(entity);
+		PhysicsManager* physMgr = world->getPhysicsManager();
+
+		PxRigidStatic* pxPlane = PxCreatePlane(*physMgr->getPhysics(), PxPlane(PxVec3(0,1,0), 0), *physMgr->getDefaultMaterial());
+		
+		// Ogre::Quaternion(Radian(0), Ogre::Vector3(0,0,1))
+		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, pxPlane);
 	}
 
 	virtual float getCtrDetectionExponent()

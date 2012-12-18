@@ -6,22 +6,35 @@ class Monolith : public GameObject
 {
 private:
 	float _a, _b, _c;
+	Ogre::Vector3 _position;
+	Ogre::Quaternion _orientation;
 public:
 	Monolith(float a, float b, float c, float x, float y, float z, float rotAngle, Ogre::Vector3 rotAxis = Ogre::Vector3::UNIT_Y)
-		: GameObject(Vector3(x,y,z), Quaternion(Radian(rotAngle), rotAxis))
+		 : _position(x,y,z),
+		 _orientation(Radian(rotAngle), rotAxis)
 	{
 		_a = a; _b = b; _c = c;
 	}
 	
-
 protected:
 
-	virtual void createEntitiesImpl(std::vector<Entity*>& entities, World* world)
+	virtual void initImpl(World* world)
 	{
 		ManualObject* cube = createCubeMesh("kaka", "Monolith", _a, _b, _c);
 		MeshPtr mesh = cube->convertToMesh(world->getNextId("mesh"));
 		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("monolith"), mesh);
-		entities.push_back(entity);
+		
+		PhysicsManager* pxMgr = world->getPhysicsManager();
+		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f;
+		PxRigidStatic* actor = PxCreateStatic(*pxMgr->getPhysics(), PxTransform::createIdentity(), PxBoxGeometry(halfExt),
+			*pxMgr->getDefaultMaterial(), PxTransform(-halfExt));
+		
+		//PxCreateDynamic(*_physics, PxTransform(PxVec3(x,y,z)), PxBoxGeometry(50,50,50), *matcsi, 10 /*,PxTransform(PxVec3(50,50,50))*/);
+		
+		addElement(_position, _orientation, entity, actor);
+
+
+		//entities.push_back(entity);
 	}
 	
 	void V(ManualObject* q, float x, float y, float z, Ogre::Vector3 n, float u, float v)
