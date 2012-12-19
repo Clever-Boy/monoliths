@@ -27,6 +27,7 @@ protected:
 		SceneManager* sceneManager = world->getSceneManager();
 
 		Plane plane(Ogre::Vector3::UNIT_Y, 0);
+		
 		MeshPtr mp = MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 			plane, _size, _size, segments, segments, true, 1, tile, tile, Ogre::Vector3::UNIT_Z);
 		Entity* entity = sceneManager->createEntity(mp);
@@ -34,11 +35,16 @@ protected:
 
 		PhysicsManager* physMgr = world->getPhysicsManager();
 
-		PxRigidStatic* pxPlane = PxCreatePlane(*physMgr->getPhysics(), PxPlane(PxVec3(0,1,0), 0), *physMgr->getDefaultMaterial());
-		
-		// Ogre::Quaternion(Radian(0), Ogre::Vector3(0,0,1))
+		PxTransform shapeRot = PxTransform(PxQuat(PxHalfPi,PxVec3(0,0,1)));
+
+		PxRigidStatic* pxPlane = PxCreateStatic(*physMgr->getPhysics(), 
+			PxTransform::createIdentity(), PxPlaneGeometry(),*physMgr->getDefaultMaterial(),
+			shapeRot);
+
 		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, pxPlane);
 	}
+
+	virtual void update(World* world, float totalTime, float dt) { }
 
 	virtual float getCtrDetectionExponent()
 	{

@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "GameController.h"
+#include "World.h"
+#include "BoxObject.h"
 
 using namespace Ogre;
 using namespace OIS;
@@ -11,9 +13,11 @@ class FreeCameraController : public GameController
 	OgreBites::SdkCameraMan _cameraMan;
 	Camera* _camera;
 
+	float _lastBoxTime;
+
 public:
 	FreeCameraController(Camera* camera)
-		: _cameraMan(camera)
+		: _cameraMan(camera), _lastBoxTime(0)
 	{
 		_camera = camera;
 	}
@@ -26,11 +30,17 @@ public:
 	virtual void onUpdating(const FrameEvent& evt, Game* game)
 	{ 
 		_cameraMan.frameRenderingQueued(evt);
+		if (game->getKeyboard()->isKeyDown(KC_SPACE) && game->getTotalTime() - _lastBoxTime > 0.2)
+		{
+			_lastBoxTime = game->getTotalTime();
+			BoxObject* box = new BoxObject(_camera->getPosition(), _camera->getDirection().normalisedCopy()*30);
+			game->getWorld()->addGameObject(box);
+		}
 	}
 
 	virtual bool keyPressed(const KeyEvent &evt)
 	{
-		_cameraMan.injectKeyDown(evt);		
+		_cameraMan.injectKeyDown(evt);
 		return true;
 	}
 

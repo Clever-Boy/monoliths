@@ -24,18 +24,18 @@ private:
 	Ground* _ground;
 	float _mapSize;
 
-	typedef union
-	{
-		float f;
-		int i;
-	} ShaderObjectID;
+	//typedef union
+	//{
+	//	float f;
+	//	int i;
+	//} ShaderObjectID;
 
 	float _shaderObjectIdCounter;
 
 	void createGameObjects();
 	void createLights();
 
-
+/*
 	void initGameObjects()
 	{
 		for (int i = 0; i < _gameObjects.size(); i++)
@@ -43,13 +43,10 @@ private:
 			_gameObjects[i]->init(this);
 		}
 	}
-
-	void addGameObject(GameObject* gameObject)
-	{
-		_gameObjects.push_back(gameObject);
-	}
+*/
 
 public:
+
 
 	World(SceneManager* sceneManager, PhysicsManager* physicsManager, float mapSize) 
 		: _sceneManager(sceneManager),
@@ -60,6 +57,13 @@ public:
 		_physicsManager = physicsManager;
 		_shaderObjectIdCounter = 0;
 		_rootNode = _sceneManager->getRootSceneNode();
+	}
+
+	
+	void addGameObject(GameObject* gameObject)
+	{
+		_gameObjects.push_back(gameObject); 
+		gameObject->init(this);
 	}
 
 	void act(float totalTime, float dt)
@@ -82,7 +86,7 @@ public:
 	{
 		createLights();
 		createGameObjects();
-		initGameObjects();
+		//initGameObjects();
 	}
 
 	String getNextId(String prefix = "object")

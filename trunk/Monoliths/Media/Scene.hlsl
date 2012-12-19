@@ -192,20 +192,7 @@ void SumDiffuseSpecularForAllLights(VERTEX_OUT v,
 	}
 	difSum /= lightCount;
 
-
-	//float shadow = 1;
-	//if(v.LightPos.z > 0)
-	//{
-		//v.LightPos /= v.LightPos.w;
-		//shadow = tex2D(shadowmap, v.LightPos.xy);
-	//}
-	//difSum*=v.LightPos.z;
-	//difSum*=shadow;
-	//specSum*=shadow;
-	
 }
-
-
 
 float4 PS_Phong(VERTEX_OUT v) : COLOR0
 {
@@ -255,3 +242,5 @@ float4 PS_PhongToonshadeTextured(VERTEX_OUT v) : COLOR0
 	float4 texel = tex2D(tex, v.Texture);
 	return texel*(ambient*ambientLight + difSum*diffuse) + specSum*specular;
 }
+
+

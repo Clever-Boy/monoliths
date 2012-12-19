@@ -60,6 +60,7 @@ void Game::setupWorld()
 	_world->init();
 }
 
+
 void Game::setupInputSystem()
 {
 	OIS::ParamList pl;

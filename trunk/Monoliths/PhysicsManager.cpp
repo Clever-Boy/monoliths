@@ -11,7 +11,7 @@ PhysicsManager::PhysicsManager()
 	_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *_foundation, PxCookingParams());
 
 	PxSceneDesc sceneDesc(_physics->getTolerancesScale());
-	sceneDesc.gravity = PxVec3(0,-1000,0);
+	sceneDesc.gravity = PxVec3(0,-10,0);
 	if (!sceneDesc.cpuDispatcher)
 	{
 		_cpuDispatcher = PxDefaultCpuDispatcherCreate(4);
@@ -27,14 +27,15 @@ PhysicsManager::PhysicsManager()
 
 	_controllerManager = PxCreateControllerManager(*_foundation);
 
-	_defaultMaterial = _physics->createMaterial(0.5, 0.5, 0.5);
+	_defaultMaterial = _physics->createMaterial(0.5, 0.5, 0.2);
 }
 
 void PhysicsManager::setupPVD()
 {
 	if (_physics->getPvdConnectionManager() == NULL)
 	{
-		throw Ogre::Exception(42, Ogre::String("FOOOOS"), Ogre::String("KAKAAA"));
+		return;
+		//throw Ogre::Exception(42, Ogre::String("FOOOOS"), Ogre::String("KAKAAA"));
 	}
 
 	const char*     pvd_host_ip = "127.0.0.1";  // IP of the PC which is running PVD
@@ -44,6 +45,7 @@ void PhysicsManager::setupPVD()
 	PxVisualDebuggerConnectionFlags connectionFlags = PxVisualDebuggerExt::getAllConnectionFlags();
 	_pvdConnection = PxVisualDebuggerExt::createConnection(_physics->getPvdConnectionManager(),
 		pvd_host_ip, port, timeout, connectionFlags);
+
 }
 
 PhysicsManager::~PhysicsManager()

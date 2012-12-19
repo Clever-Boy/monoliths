@@ -18,6 +18,8 @@ struct GameObjectElement
 	void updateNode();
 };
 
+extern const float GAMEOBJECT_PHYSICS_SCALE;
+
 class GameObject
 {
 private:
@@ -26,11 +28,11 @@ private:
 	SceneManager* _sceneManager;
 	/*std::vector<Entity*> _entities;
 	std::vector<PxActor*> _actors;*/
-	std::vector<GameObjectElement> _elements;
-
+	
 	SceneNode* _node;
 	
 protected:
+	std::vector<GameObjectElement> _elements;
 
 	GameObject()
 	{
@@ -42,6 +44,12 @@ protected:
 	{
 		return 1;
 	}
+
+	virtual float getScale() const 
+	{ 
+		return 1;
+	}
+
 protected:
 
 	void addElement(const Ogre::Vector3& position, const Ogre::Quaternion& orientation,
@@ -55,6 +63,8 @@ protected:
 
 		_elements.push_back(element);
 	}
+
+	virtual void postInit() { }
 
 public:
 	/*std::vector<MovableObject*> getEntities()

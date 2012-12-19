@@ -25,16 +25,12 @@ protected:
 		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("monolith"), mesh);
 		
 		PhysicsManager* pxMgr = world->getPhysicsManager();
-		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f;
+		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f / GAMEOBJECT_PHYSICS_SCALE;
+
 		PxRigidStatic* actor = PxCreateStatic(*pxMgr->getPhysics(), PxTransform::createIdentity(), PxBoxGeometry(halfExt),
-			*pxMgr->getDefaultMaterial(), PxTransform(-halfExt));
-		
-		//PxCreateDynamic(*_physics, PxTransform(PxVec3(x,y,z)), PxBoxGeometry(50,50,50), *matcsi, 10 /*,PxTransform(PxVec3(50,50,50))*/);
+			*pxMgr->getDefaultMaterial(), PxTransform(halfExt));
 		
 		addElement(_position, _orientation, entity, actor);
-
-
-		//entities.push_back(entity);
 	}
 	
 	void V(ManualObject* q, float x, float y, float z, Ogre::Vector3 n, float u, float v)
