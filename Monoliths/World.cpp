@@ -3,6 +3,7 @@
 #include "Monolith.h"
 #include "Ground.h"
 #include "MonolithGenerator.h"
+#include "BoxObject.h"
 
 using namespace Ogre;
 
@@ -47,9 +48,7 @@ void World::createLights()
 
 void World::createGameObjects()
 {
-	_ground = new Ground(_mapSize, 500);
-	addGameObject(_ground);
-
+	
 	float avgDistance = 2000;
 
 	int n = (_mapSize*_mapSize)/(avgDistance*avgDistance);
@@ -63,7 +62,18 @@ void World::createGameObjects()
 		addGameObject(monolith);
 	}
 
+	_ground = new Ground(_mapSize, 500);
+	addGameObject(_ground);
+/*
+	for (int i = -10;i<10;i++)
+	{
+		for (int j = -10; j<10;j++)
+		{
+			BoxObject* box = new BoxObject(i*500, 1000, j*500);
+			addGameObject(box);
+		}
+	}*/
 
-	std::rand();
+	
 }
 

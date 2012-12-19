@@ -14,6 +14,8 @@ private:
 
 	Ogre::Vector3 _initialPosition;
 	
+
+
 public:
 
 	BoxObject(float x, float y, float z, GameController* controller)

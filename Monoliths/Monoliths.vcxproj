@@ -66,6 +66,7 @@
 xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OgreMain_d.dll" "$(OutDir)" /F /R /Y /I
 xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\RenderSystem_Direct3D9_d.dll" "$(OutDir)" /F /R /Y /I
 xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\debug\OIS_d.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Bin\win32\*.dll" "$(OutDir)" /F /R /Y /I
 
 xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
@@ -88,13 +89,20 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\lib\release;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\lib;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Lib\win32\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OgreMain.lib;OIS.lib;PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysX3Cooking_x86.lib;PhysXVisualDebuggerSDK.lib;PhysX3CharacterKinematic_x86.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I</Command>
+      <Command>xcopy "$(ProjectDir)Media\*" "$(OutDir)media\*" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\release\OgreMain.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\release\RenderSystem_Direct3D9.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\bin\release\OIS.dll" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Bin\win32\*.dll" "$(OutDir)" /F /R /Y /I
+
+xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoxObject.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="PhysicsManager.h" />
