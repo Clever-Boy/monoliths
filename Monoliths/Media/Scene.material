@@ -272,6 +272,37 @@ material Ground : PhongTextured
 	set $texture "concrete_wall.png"
 }
 
+material Monolith_basic
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0.05 0.05 0.05 1
+			diffuse 2.0 2.0 0.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
+material Ground_basic
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 1 1 1 1
+			diffuse 3.0 3.0 3.0 1.0
+			specular 0.5 0.5 0.5 0
+
+			texture_unit
+			{
+				texture concrete_wall.png
+			}
+		}
+	}
+}
+
 material RefNinnya
 {
 	technique main

@@ -20,7 +20,7 @@ protected:
 
 	virtual void initImpl(World* world)
 	{
-		ManualObject* cube = createCubeMesh("kaka", "Monolith", _a, _b, _c);
+		ManualObject* cube = createCubeMesh("kaka", "Monolith_basic", _a, _b, _c);
 		MeshPtr mesh = cube->convertToMesh(world->getNextId("mesh"));
 		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("monolith"), mesh);
 		

@@ -67,17 +67,6 @@ protected:
 	virtual void postInit() { }
 
 public:
-	/*std::vector<MovableObject*> getEntities()
-	{
-		return _entities;
-	}
-*/
-	//typedef std::vector<Entity*>::const_iterator EntityIterator;
-
-	/*EntityIterator getEntitiesIterator()
-	{
-		return _entities.begin();
-	}*/
 
 	SceneNode* getNode()
 	{
@@ -88,9 +77,7 @@ public:
 	
 	virtual void act(World* world, float totalTime, float dt) { }
 	virtual void update(World* world, float totalTime, float dt);
-
-	virtual bool isStatic() { return true; }
-
+	
 	/*
 	void setPosition(float x, float y, float z)
 	{
