@@ -16,6 +16,8 @@ void Game::start()
 #endif
 		_root = new Ogre::Root(pluginsCfg);
 		
+		
+
 		RenderSystemList list = _root->getAvailableRenderers(); 
 		_root->setRenderSystem(list.at(0));
 		_root->initialise(false);
@@ -50,13 +52,13 @@ void Game::setupRenderSystem()
 	_viewport = _window->addViewport(_freeCamera);
 	_window->setActive(true);
 	_compie = CompositorManager::getSingleton().addCompositor(_window->getViewport(0), "Global");	
-	_compie->setEnabled(true);
+	//_compie->setEnabled(true);
 }
 
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 40000);
+	_world = new World(_sceneManager, _physicsManager, 10000);
 	_world->init();
 }
 
