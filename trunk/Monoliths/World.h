@@ -3,6 +3,7 @@
 #include "GameObject.h"
 //#include "Ground.h"
 #include "PhysicsManager.h";
+//#include "Character.h"
 
 using namespace Ogre;
 
@@ -11,6 +12,7 @@ extern "C" {
 }
 
 class Ground;
+class Character;
 
 class World
 {
@@ -22,6 +24,7 @@ private:
 	int _idCounter;
 
 	Ground* _ground;
+	Character* _puppie;
 	float _mapSize;
 
 	//typedef union
@@ -58,7 +61,11 @@ public:
 		_shaderObjectIdCounter = 0;
 		_rootNode = _sceneManager->getRootSceneNode();
 	}
-
+	
+	Character* getPuppie()
+	{
+		return _puppie;
+	}
 	
 	void addGameObject(GameObject* gameObject)
 	{
