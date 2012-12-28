@@ -4,6 +4,7 @@
 #include "Ground.h"
 #include "MonolithGenerator.h"
 #include "BoxObject.h"
+#include "Robot.h"
 
 using namespace Ogre;
 
@@ -64,7 +65,12 @@ void World::createGameObjects()
 
 	_ground = new Ground(_mapSize, 500);
 	addGameObject(_ground);
-/*
+
+	_puppie = new Robot();
+	addGameObject(_puppie);
+
+
+	/*
 	for (int i = -10;i<10;i++)
 	{
 		for (int j = -10; j<10;j++)

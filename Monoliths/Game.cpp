@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Game.h"
+#include "Character.h"
+#include "Action.h"
 #include "FreeCameraController.h"
+#include "TPSCharacterController.h"
 
 using namespace Ogre;
 
@@ -79,9 +82,13 @@ void Game::setupInputSystem()
 
 	FreeCameraController* freeController = new FreeCameraController(_freeCamera);
 	addController(freeController);
+	
+	TPSCharacterController* puppieController = new TPSCharacterController(_world, _world->getPuppie(), 
+		Action::ROBOT_IDLE, Action::ROBOT_WALK);
+	addController(puppieController);
+
 	setActiveController(0);
-	//_keyboard->setEventCallback(this);
-	//_mouse->setEventCallback(this);
+	
 }
 
 bool Game::doUpdate(const FrameEvent& evt)

@@ -31,6 +31,16 @@ public:
 		return _defaultMaterial;
 	}
 
+	PxControllerManager* getControllerManager()
+	{
+		return _controllerManager;
+	}
+
+	PxCapsuleController* createCapsuleController(const PxCapsuleControllerDesc& desc)
+	{
+		return (PxCapsuleController*)_controllerManager->createController(*_physics, _scene, desc);
+	}
+
 	void simulate(float dt)
 	{
 		_scene->simulate(dt);

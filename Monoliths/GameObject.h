@@ -15,6 +15,8 @@ struct GameObjectElement
 	SceneNode* node;
 
 	void init(SceneNode* node, World* world);
+
+	void updateFromActor();
 	void updateNode();
 };
 
@@ -23,12 +25,7 @@ extern const float GAMEOBJECT_PHYSICS_SCALE;
 class GameObject
 {
 private:
-	
-
 	SceneManager* _sceneManager;
-	/*std::vector<Entity*> _entities;
-	std::vector<PxActor*> _actors;*/
-	
 	SceneNode* _node;
 	
 protected:
@@ -77,16 +74,4 @@ public:
 	
 	virtual void act(World* world, float totalTime, float dt) { }
 	virtual void update(World* world, float totalTime, float dt);
-	
-	/*
-	void setPosition(float x, float y, float z)
-	{
-		_position = Ogre::Vector3(x, y, z);
-		_node->setPosition(_position);
-	}
-
-	Ogre::Vector3 getPosition()
-	{
-		return _position;
-	}*/
 };

@@ -12,12 +12,11 @@ void GameObjectElement::init(SceneNode* node, World* world)
 	{
 		node->attachObject(entity);
 	}
-	node->setPosition(position);
-	node->setOrientation(orientation);
+
+	updateNode();
 
 	if (actor != NULL)
 	{
-		//PxQuat pxOrientation = PxQuat::createIdentity();
 		PxQuat pxOrientation =  PxQuat(orientation.x, orientation.y, orientation.z, orientation.w);
 		PxTransform transform = PxTransform(PxVec3(position.x, position.y, position.z)/GAMEOBJECT_PHYSICS_SCALE, pxOrientation);
 		actor->setGlobalPose(transform);
@@ -26,16 +25,20 @@ void GameObjectElement::init(SceneNode* node, World* world)
 	}
 }
 
-void GameObjectElement::updateNode()
+void GameObjectElement::updateFromActor()
 {
 	if (actor != NULL)
 	{
-		PxTransform &transform = actor->getGlobalPose();
-		PxQuat q = transform.q;
-		PxVec3 p = transform.p * GAMEOBJECT_PHYSICS_SCALE;
-		node->setOrientation(q.w, q.x, q.y, q.z);
-		node->setPosition(p.x, p.y, p.z);
+		PxTransform t = actor->getGlobalPose();
+		position = Ogre::Vector3(t.p.x, t.p.y, t.p.z) * GAMEOBJECT_PHYSICS_SCALE;
+		orientation = Ogre::Quaternion(t.q.w, t.q.x, t.q.y, t.q.z);
 	}
+}
+
+void GameObjectElement::updateNode()
+{
+	node->setOrientation(orientation);
+	node->setPosition(position);
 }
 
 void GameObject::init(World* world)
@@ -69,6 +72,7 @@ void GameObject::update(World* world, float totalTime, float dt)
 {
 	for (auto i = _elements.begin(); i != _elements.end(); i++)
 	{
+		(*i).updateFromActor();
 		(*i).updateNode();
 	}
 }

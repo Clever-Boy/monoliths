@@ -88,6 +88,7 @@ public:
 		return _mouse;
 	}
 
+
 	void addController(GameController* controller)
 	{
 		_controllers.push_back(controller);

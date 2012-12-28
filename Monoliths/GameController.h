@@ -12,4 +12,30 @@ public:
 	virtual Ogre::Camera* getCamera() = 0;
 	virtual void onUpdating(const FrameEvent& evt, Game* game) { };
 	virtual void onUpdated(const FrameEvent& evt, Game* game) { };
+
+	
+	virtual bool keyPressed(const KeyEvent &evt)
+	{
+		return true;
+	}
+
+	virtual bool keyReleased(const KeyEvent &evt)
+	{
+		return true;
+	}
+
+	virtual bool mouseMoved(const MouseEvent &evt )
+	{
+		return true;
+	}
+
+	virtual bool mousePressed(const MouseEvent &evt, MouseButtonID id )
+	{
+		return true;
+	}
+
+	virtual bool mouseReleased(const MouseEvent &evt, MouseButtonID id )
+	{
+		return true;
+	}
 };
