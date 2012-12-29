@@ -7,23 +7,13 @@ compositor Global
 		texture depthmap target_width target_height PF_FLOAT16_RGBA
 		texture contour target_width target_height PF_FLOAT16_RGBA
 		
+		//target_output
 		target original
 		{
 			input previous
 		}
 
-		/*
-		target originalNoGround
-		{
-			input none
-			pass clear 
-			{ 
-				colour_value 0.8 0.8 0.8 0
-			}
-			pass render_scene { }
-		}
-		*/
-
+		
 		target toonshaded
 		{
 			input none
@@ -35,7 +25,7 @@ compositor Global
 			}
 			pass render_scene { }
 		}
-
+		
 		target depthmap
 		{
 			input none
@@ -47,7 +37,7 @@ compositor Global
 			}
 			pass render_scene { }
 		}
-
+		
 		target contour
 		{
 			input none
@@ -78,5 +68,6 @@ compositor Global
 				input 3 contour
 			}
 		}
+		
 	}
 }

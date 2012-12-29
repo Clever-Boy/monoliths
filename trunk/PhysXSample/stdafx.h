@@ -21,6 +21,7 @@
 #include <OIS.h>
 #include <Terrain/OgreTerrain.h>
 #include <Terrain/OgreTerrainGroup.h>
+#include <OgreTextAreaOverlayElement.h>
 
 #include <SdkCameraMan.h>
 #include <PxPhysicsAPI.h>

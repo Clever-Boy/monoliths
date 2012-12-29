@@ -69,6 +69,9 @@
     <ClInclude Include="TPSCharacterController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +115,9 @@
       <Filter>Media</Filter>
     </None>
     <None Include="Media\Global.compositor">
+      <Filter>Media</Filter>
+    </None>
+    <None Include="Media\Overlay.overlay">
       <Filter>Media</Filter>
     </None>
   </ItemGroup>

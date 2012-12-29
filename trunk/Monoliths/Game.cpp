@@ -5,44 +5,72 @@
 #include "FreeCameraController.h"
 #include "TPSCharacterController.h"
 
+//#include <OgreTextAreaOverlayElement.h>
+
 using namespace Ogre;
 
 const float Game::STEP_TIME = 0.001;
 
 void Game::start()
 {
-		String pluginsCfg =
+	String pluginsCfg =
 #ifdef _DEBUG
-			"plugins_d.cfg";
+		"plugins_d.cfg";
 #else
-			"plugins.cfg";
+		"plugins.cfg";
 #endif
-		_root = new Ogre::Root(pluginsCfg);
-		
-		
+	_root = new Ogre::Root(pluginsCfg);
 
-		RenderSystemList list = _root->getAvailableRenderers();  
-		_root->setRenderSystem(list.at(0));
-		_root->initialise(false);
+	RenderSystemList list = _root->getAvailableRenderers();  
+	_root->setRenderSystem(list.at(0));
+	_root->initialise(false);
 
-		NameValuePairList misc;
-		misc["FSAA"] = "8";
-		_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
-		_sceneManager = _root->createSceneManager(0, "Default");
-		ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
-		ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+	NameValuePairList misc;
+	misc["FSAA"] = "8";
+	_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
+	//_sceneManager = _root->createSceneManager(0, "Default");
+	_sceneManager = _root->createSceneManager("OctreeSceneManager");
+	ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
+	ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+	
+	_physicsManager = new PhysicsManager();
 
-		_physicsManager = new PhysicsManager();
+	setupRenderSystem();
+	setupWorld();
+	setupOverlays();
+	setupInputSystem();
+	_physicsManager->setupPVD();
 
-		setupRenderSystem();
-		setupWorld();
-		setupInputSystem();
-		_physicsManager->setupPVD();
+	_root->addFrameListener(this);
+	doRenderLoop();
+}
 
-		_root->addFrameListener(this);
-		doRenderLoop();
-	}
+void Game::setupOverlays()
+{
+	Ogre::FontManager::getSingleton().getByName("TrebuchetMSBold")->load();
 
+	Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();
+	Ogre::Overlay* overlay = mgr.create("kaksi");
+	_guiPanel = (OverlayContainer*)mgr.createOverlayElement("Panel", "pocs");
+	_guiPanel->setMetricsMode(GMM_PIXELS);
+	_guiPanel->setPosition(10,10);
+	_guiPanel->setDimensions(50,30);
+	//panel->setMaterialName("Panel");
+	//panel->setColour(ColourValue(0,0,0,0));
+	overlay->add2D(_guiPanel);
+
+	_fpsElement = (TextAreaOverlayElement*)mgr.createOverlayElement("TextArea", "fos");
+	_fpsElement->setMetricsMode(GMM_PIXELS);
+	_fpsElement->setPosition(0,0);
+	_fpsElement->setDimensions(50,30);
+	//_fpsElement->setCaption("CSICSKA!");
+	_fpsElement->setCharHeight(16);
+	_fpsElement->setFontName("TrebuchetMSBold");
+	//textArea->setColour(ColourValue(1,0,0,1));
+	_guiPanel->addChild(_fpsElement);
+	overlay->show();
+
+}
 
 void Game::setupRenderSystem()
 {
@@ -144,6 +172,11 @@ bool Game::doUpdate(const FrameEvent& evt)
 	//_mouse->capture();
 	//_keyboard->capture();
 	
+	//_window->getLastFPS();
+
+	String fpsStr = StringConverter::toString(_window->getLastFPS(), 4);
+	_fpsElement->setCaption("FPS: "+fpsStr);
+
 	_totalTime += evt.timeSinceLastEvent;
 
 	if (_keyboard->isKeyDown(KC_ESCAPE))

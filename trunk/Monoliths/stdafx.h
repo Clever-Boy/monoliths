@@ -23,3 +23,6 @@
 //#include <Terrain/OgreTerrainGroup.h>
 #include <SdkCameraMan.h>
 #include <PxPhysicsAPI.h>
+
+#include <OgreFontManager.h>
+#include <OgreTextAreaOverlayElement.h>

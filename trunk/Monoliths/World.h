@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "common.h"
 #include "GameObject.h"
 //#include "Ground.h"
 #include "PhysicsManager.h";

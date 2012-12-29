@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
+#include "common.h"
 
-//#define BASIC_GRAPHICS
 
 using namespace Ogre;
 using namespace physx;
