@@ -274,7 +274,7 @@ material Ground : PhongTextured
 
 material Robot : PhongTextured
 {
-	set $ambient  "0.05 0.05 0.05 1"
+	set $ambient  "1 1 1 1"
 	set $diffuse  "2.0 2.0 2.0 1.0"
 	set $specular "1 1 1 15"
 	set $texture  "r2skin.jpg"
@@ -317,7 +317,7 @@ material Robot_basic
 	{
 		pass main
 		{
-			ambient 0.05 0.05 0.05 1
+			ambient 1 1 1 1
 			diffuse 2.0 2.0 2.0 1.0
 			specular 1 1 1 15
 
@@ -382,6 +382,20 @@ material Doboz
 			{
 				texture doboz.tga
 			}
+		}
+	}
+}
+
+material Panel
+{
+	technique
+	{
+		pass
+		{
+			ambient 1 0 0 0
+			diffuse 1 0 0 0
+			specular 1 0 0 0
+			emissive 0 0 0
 		}
 	}
 }

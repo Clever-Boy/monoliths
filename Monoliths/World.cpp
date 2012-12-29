@@ -62,7 +62,7 @@ void World::createGameObjects()
 		Monolith* monolith = gen.createMonolith();
 		addGameObject(monolith);
 	}
-
+	
 	_ground = new Ground(_mapSize, 500);
 	addGameObject(_ground);
 
@@ -72,7 +72,6 @@ void World::createGameObjects()
 	addGameObject(new BoxObject(Ogre::Vector3(500, 50, 0)));
 	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 500)));
 	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 1000)));
-
 	
 }
 

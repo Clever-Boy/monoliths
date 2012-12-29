@@ -23,6 +23,11 @@ class Character : public GameObject
 
 public:
 
+	bool hasElement()
+	{
+		return _elements.size() > 0;
+	}
+
 	GameObjectElement& getElement()
 	{
 		return _elements[0];

@@ -1,6 +1,7 @@
 #pragma once
-
 #include "stdafx.h"
+
+#include "common.h"
 #include "World.h"
 #include "GameController.h"
 #include "PhysicsManager.h"
@@ -12,6 +13,7 @@ using namespace OIS;
 class Game : public FrameListener
 {
 private:
+	//SceneManager* _sceneManager;
 	Ogre::Root* _root;
 	RenderWindow* _window;
 	SceneManager* _sceneManager;
@@ -35,10 +37,14 @@ private:
 	World* _world;
 	std::vector<GameController*> _controllers;
 	GameController* _activeController;
+	
+	OverlayContainer* _guiPanel;
+	TextAreaOverlayElement* _fpsElement;
 
 	void setupRenderSystem();
 	void setupWorld();
 	void setupInputSystem();
+	void setupOverlays();
 
 	void setActiveController(int controllerIdx)
 	{

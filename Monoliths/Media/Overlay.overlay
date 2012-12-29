@@ -1,0 +1,23 @@
+MainOverlay
+{
+	container Panel(MainContainer)
+	{
+		transparent true
+		left 0
+		top 0
+		width 1
+		height 1
+		
+		element TextArea(Bazeg)
+		{
+			left 0.85
+			top 0.86
+			char_height 0.1
+			colour 1 1 0
+			font_name TrebuchetMSBold
+			caption 100	   
+		}
+		
+	}
+
+}

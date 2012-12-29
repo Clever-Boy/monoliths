@@ -34,11 +34,14 @@ public:
 
 	void setCameraFromCharacter()
 	{
-		Ogre::Vector3 lookDir = _character->getLookingDirection();
-		Ogre::Vector3 pos = _character->getElement().position + Ogre::Vector3::UNIT_Y*100;
-		_camera->setPosition(pos-lookDir*300+Ogre::Vector3::UNIT_Y*_mouseHeight);
-		//_camera->setDirection(lookDir);
-		_camera->lookAt(pos+lookDir*300);
+		if (_character->hasElement())
+		{
+			Ogre::Vector3 lookDir = _character->getLookingDirection();
+			Ogre::Vector3 pos = _character->getElement().position + Ogre::Vector3::UNIT_Y*100;
+			_camera->setPosition(pos-lookDir*300+Ogre::Vector3::UNIT_Y*_mouseHeight);
+			//_camera->setDirection(lookDir);
+			_camera->lookAt(pos+lookDir*300);
+		}
 	}
 
 	virtual Camera* getCamera() { return _camera; }
@@ -51,12 +54,12 @@ public:
 		_mouseHeight+=_mouseMove.y*dt*70;
 
 		_character->clearActions();
-		String zzz = StringConverter::toString(_frameCounter++)+String("\n");
-		OutputDebugString(zzz.c_str());
+		//String zzz = StringConverter::toString(_frameCounter++)+String("\n");
+		//OutputDebugString(zzz.c_str());
 		if (game->getKeyboard()->isKeyDown(KC_W))
 		{
-			zzz = "NNNnnnnyy "+zzz;
-			OutputDebugString(zzz.c_str());
+			//zzz = "NNNnnnnyy "+zzz;
+			//OutputDebugString(zzz.c_str());
 			_character->addAction(_walkAction);
 		}
 		else
@@ -74,8 +77,8 @@ public:
 
 	virtual bool keyPressed(const KeyEvent &evt)
 	{
-		String sajt = String("PRESSED @ ")+StringConverter::toString(_frameCounter)+"\n";
-		OutputDebugString(sajt.c_str());
+		//String sajt = String("PRESSED @ ")+StringConverter::toString(_frameCounter)+"\n";
+		//OutputDebugString(sajt.c_str());
 		return true;
 	}
 	

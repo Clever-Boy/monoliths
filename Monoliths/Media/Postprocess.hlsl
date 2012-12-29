@@ -5,7 +5,6 @@ struct VERTEX_IN
 	float2 Texture : TEXCOORD0;
 };
 
-
 struct VERTEX_OUT
 {
 	float4 Position : POSITION;
