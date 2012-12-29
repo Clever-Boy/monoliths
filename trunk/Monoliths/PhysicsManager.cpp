@@ -27,7 +27,7 @@ PhysicsManager::PhysicsManager()
 
 	_controllerManager = PxCreateControllerManager(*_foundation);
 
-	_defaultMaterial = _physics->createMaterial(0.5, 0.5, 0.2);
+	_defaultMaterial = _physics->createMaterial(0.5, 0.5, 0.1);
 }
 
 void PhysicsManager::setupPVD()

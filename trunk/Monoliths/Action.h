@@ -52,7 +52,7 @@ class Movement : public Idle
 	
 public:
 	Movement(float displacement, String animName) :
-		_displacement(displacement/GAMEOBJECT_PHYSICS_SCALE),
+		_displacement(displacement/PHYSICS2WORLD_SCALE),
 		Idle(animName)
 	{
 	}
@@ -61,8 +61,10 @@ public:
 	{ 
 		PxCapsuleController* controller = character->getPhysController();
 		float look = character->getLookingAngle();
-		Ogre::Vector3 lookDir = character->getLookDirection();
-		PxVec3 disp = PxVec3(lookDir.x, lookDir.y, lookDir.z) * _displacement;
-		controller->move(disp, 1, dt, PxControllerFilters());
+		Ogre::Vector3 lookDir = character->getLookingDirection();
+		PxVec3 disp = PxVec3(lookDir.x, lookDir.y, lookDir.z) * dt* _displacement;
+		LOG(String("DT: ")+StringConverter::toString(dt) + String(" MOV: ") +StringConverter::toString(Ogre::Vector3(disp.x, disp.y, disp.z) ));
+		PxControllerFilters filters;
+		controller->move(disp, 0.0001, dt, filters);
 	}
 };

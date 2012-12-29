@@ -7,7 +7,7 @@
 
 using namespace Ogre;
 
-const float Game::STEP_TIME = 0.01;
+const float Game::STEP_TIME = 0.001;
 
 void Game::start()
 {
@@ -21,7 +21,7 @@ void Game::start()
 		
 		
 
-		RenderSystemList list = _root->getAvailableRenderers(); 
+		RenderSystemList list = _root->getAvailableRenderers();  
 		_root->setRenderSystem(list.at(0));
 		_root->initialise(false);
 
@@ -55,7 +55,9 @@ void Game::setupRenderSystem()
 	_viewport = _window->addViewport(_freeCamera);
 	_window->setActive(true);
 	_compie = CompositorManager::getSingleton().addCompositor(_window->getViewport(0), "Global");	
-	//_compie->setEnabled(true);
+#ifndef BASIC_GRAPHICS
+	_compie->setEnabled(true);
+#endif
 }
 
 void Game::setupWorld()
@@ -91,10 +93,56 @@ void Game::setupInputSystem()
 	
 }
 
+void Game::doRenderLoop()
+{
+	//_root->startRendering();
+
+
+	while(true)
+	{
+		if(_window->isClosed())
+		{
+			_root->shutdown();
+			break;
+		}
+		WindowEventUtilities::messagePump();
+		_mouse->capture();
+		_keyboard->capture();
+		
+
+		if(!_root->renderOneFrame())
+		{
+			_root->shutdown();
+			break;
+		}
+	}
+
+	/*while(true)
+	{
+		if(_window->isClosed())
+		{
+			_root->shutdown();
+			break;
+		}
+		WindowEventUtilities::messagePump();
+		_mouse->capture();
+		_keyboard->capture();
+		
+
+		if(!_root->renderOneFrame())
+		{
+			_root->shutdown();
+			break;
+		}
+	}*/
+}
+
+
 bool Game::doUpdate(const FrameEvent& evt)
 { 
-	_mouse->capture();
-	_keyboard->capture();
+	
+	//_mouse->capture();
+	//_keyboard->capture();
 	
 	_totalTime += evt.timeSinceLastEvent;
 
@@ -115,18 +163,29 @@ bool Game::doUpdate(const FrameEvent& evt)
 	_activeController->onUpdating(evt, this);
 
 	
+#if 1
 	_simulationAccumulator += evt.timeSinceLastFrame;
 	
 	if (_simulationAccumulator >= STEP_TIME)
 	{
-		_simulationAccumulator -= STEP_TIME;
-		_world->act(_totalTime, STEP_TIME);
-		_physicsManager->simulate(STEP_TIME);
-		_world->update(_totalTime, STEP_TIME);
-	}
+		float elap = Math::Floor(_simulationAccumulator/STEP_TIME);
+		elap*=STEP_TIME;
 
-	_world->update(_totalTime, evt.timeSinceLastEvent);
+		_simulationAccumulator -= elap;
+		_world->act(_totalTime, elap);
+		_physicsManager->simulate(elap);
+		_world->update(_totalTime, elap);
+	}
+#else
+	
+	_world->act(_totalTime, evt.timeSinceLastFrame);
+	_physicsManager->simulate(evt.timeSinceLastFrame);
+	_world->update(_totalTime, evt.timeSinceLastFrame);
+#endif
+
+	
 	_activeController->onUpdated(evt, this);
+
 
 	return true; 
 }

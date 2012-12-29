@@ -95,31 +95,18 @@ public:
 	}
 	
 	void start();
-	void doRenderLoop()
-	{
-		while(true)
-		{
-			if(_window->isClosed())
-			{
-				_root->shutdown();
-				break;
-			}
-			WindowEventUtilities::messagePump();
-		
-			if(!_root->renderOneFrame())
-			{
-				_root->shutdown();
-				break;
-			}
-		}
-	}
+	void doRenderLoop();
 
-	virtual bool frameStarted(const FrameEvent& evt) { return true; }
+	virtual bool frameStarted(const FrameEvent& evt) 
+	{ 
+		return true; 
+	}
 
 	bool doUpdate(const FrameEvent& evt);
 
 	virtual bool frameRenderingQueued(const FrameEvent& evt)
 	{ 
 		return doUpdate(evt);
+		//return true;
 	}
 };

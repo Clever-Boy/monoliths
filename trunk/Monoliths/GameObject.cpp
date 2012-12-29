@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "World.h"
 
-const float GAMEOBJECT_PHYSICS_SCALE = 100;
+const float PHYSICS2WORLD_SCALE = 100;
 
 void GameObjectElement::init(SceneNode* node, World* world)
 {
@@ -18,7 +18,7 @@ void GameObjectElement::init(SceneNode* node, World* world)
 	if (actor != NULL)
 	{
 		PxQuat pxOrientation =  PxQuat(orientation.x, orientation.y, orientation.z, orientation.w);
-		PxTransform transform = PxTransform(PxVec3(position.x, position.y, position.z)/GAMEOBJECT_PHYSICS_SCALE, pxOrientation);
+		PxTransform transform = PxTransform(PxVec3(position.x, position.y, position.z)/PHYSICS2WORLD_SCALE, pxOrientation);
 		actor->setGlobalPose(transform);
 
 		world->getPhysicsManager()->addActor(actor);
@@ -30,7 +30,7 @@ void GameObjectElement::updateFromActor()
 	if (actor != NULL)
 	{
 		PxTransform t = actor->getGlobalPose();
-		position = Ogre::Vector3(t.p.x, t.p.y, t.p.z) * GAMEOBJECT_PHYSICS_SCALE;
+		position = Ogre::Vector3(t.p.x, t.p.y, t.p.z) * PHYSICS2WORLD_SCALE;
 		orientation = Ogre::Quaternion(t.q.w, t.q.x, t.q.y, t.q.z);
 	}
 }

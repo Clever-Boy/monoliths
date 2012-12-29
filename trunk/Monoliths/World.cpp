@@ -69,16 +69,9 @@ void World::createGameObjects()
 	_puppie = new Robot();
 	addGameObject(_puppie);
 
-
-	/*
-	for (int i = -10;i<10;i++)
-	{
-		for (int j = -10; j<10;j++)
-		{
-			BoxObject* box = new BoxObject(i*500, 1000, j*500);
-			addGameObject(box);
-		}
-	}*/
+	addGameObject(new BoxObject(Ogre::Vector3(500, 50, 0)));
+	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 500)));
+	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 1000)));
 
 	
 }

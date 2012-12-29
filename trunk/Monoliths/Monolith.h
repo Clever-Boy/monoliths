@@ -20,12 +20,19 @@ protected:
 
 	virtual void initImpl(World* world)
 	{
-		ManualObject* cube = createCubeMesh("kaka", "Monolith_basic", _a, _b, _c);
+		String matName =
+#ifndef BASIC_GRAPHICS
+			"Monolith";
+#else
+			"Monolith_basic";
+#endif
+
+		ManualObject* cube = createCubeMesh("kaka", matName, _a, _b, _c);
 		MeshPtr mesh = cube->convertToMesh(world->getNextId("mesh"));
 		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("monolith"), mesh);
 		
 		PhysicsManager* pxMgr = world->getPhysicsManager();
-		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f / GAMEOBJECT_PHYSICS_SCALE;
+		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f / PHYSICS2WORLD_SCALE;
 
 		PxRigidStatic* actor = PxCreateStatic(*pxMgr->getPhysics(), PxTransform::createIdentity(), PxBoxGeometry(halfExt),
 			*pxMgr->getDefaultMaterial(), PxTransform(halfExt));

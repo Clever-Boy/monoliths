@@ -1,6 +1,8 @@
 #pragma once
 #include "stdafx.h"
 
+//#define BASIC_GRAPHICS
+
 using namespace Ogre;
 using namespace physx;
 
@@ -20,7 +22,7 @@ struct GameObjectElement
 	void updateNode();
 };
 
-extern const float GAMEOBJECT_PHYSICS_SCALE;
+extern const float PHYSICS2WORLD_SCALE;
 
 class GameObject
 {

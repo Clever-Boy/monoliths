@@ -13,6 +13,11 @@ class Robot : public Character
 
 public:
 
+	virtual float getScale() const 
+	{ 
+		return 2;
+	}
+
 	Robot(Ogre::Vector3 initialPosition = Ogre::Vector3::ZERO, float initialLookingAngle = 0.01)
 		: _initialPosition(initialPosition),
 		  _initialLookingAngle(initialLookingAngle)
@@ -23,7 +28,11 @@ public:
 	{ 
 		Entity* entity = world->getSceneManager()->
 			createEntity(world->getNextId("robot"), "robot.mesh");
+#ifndef BASIC_GRAPHICS
+		entity->setMaterialName("Robot");
+#else
 		entity->setMaterialName("Robot_basic");
+#endif
 		return entity;
 	}
 
