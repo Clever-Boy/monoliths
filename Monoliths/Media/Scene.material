@@ -272,6 +272,14 @@ material Ground : PhongTextured
 	set $texture "concrete_wall.png"
 }
 
+material Robot : PhongTextured
+{
+	set $ambient  "0.05 0.05 0.05 1"
+	set $diffuse  "2.0 2.0 2.0 1.0"
+	set $specular "1 1 1 15"
+	set $texture  "r2skin.jpg"
+}
+
 material Monolith_basic
 {
 	technique main

@@ -13,7 +13,7 @@ private:
 	PxVec3 _force;
 
 public:
-	BoxObject(const Ogre::Vector3& position, const Ogre::Vector3 force)
+	BoxObject(const Ogre::Vector3& position, const Ogre::Vector3 force = Ogre::Vector3::ZERO)
 		: _position(position), _force(force.x, force.y, force.z)
 	{
 	}
@@ -35,8 +35,9 @@ protected:
 
 		PxMaterial* matcsi = physMgr->getDefaultMaterial();
 
+		PxVec3 ext = PxVec3(50,50,50)/PHYSICS2WORLD_SCALE;
 		PxRigidDynamic* actor =  PxCreateDynamic(*physMgr->getPhysics(), 
-			PxTransform::createIdentity(), PxBoxGeometry(0.5,0.5,0.5), *matcsi, 10);
+			PxTransform::createIdentity(), PxBoxGeometry(ext), *matcsi, 0.10);
 
 		addElement(_position, Ogre::Quaternion::IDENTITY, entity, actor);
 	}

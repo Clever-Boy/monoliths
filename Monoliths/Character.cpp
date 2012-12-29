@@ -44,17 +44,10 @@ void Character::act(World* world, float totalTime, float dt)
 	}
 }
 
-void Character::initCapsuleControllerDesc(PxCapsuleControllerDesc& desc, PhysicsManager* physicsMgr)
+void Character::initCapsuleControllerMisc(PxCapsuleControllerDesc& desc, PhysicsManager* physicsMgr)
 {
-	desc.radius = 0.3;
-	desc.height = 2;
-	desc.upDirection = PxVec3(0, 1, 0);
-
 	desc.slopeLimit = 0.707;
-	desc.stepOffset = 0.5;
-		
-	desc.position.set(0,0,0);
-	desc.material = physicsMgr->getDefaultMaterial();
+	desc.stepOffset = 0.05;
 }
 
 void Character::initImpl(World* world)
@@ -68,16 +61,24 @@ void Character::initImpl(World* world)
 
 	addElement(position, orientation, entity);
 
+	PhysicsManager* physMgr = world->getPhysicsManager();
+
 	PxCapsuleControllerDesc desc;
 	desc.setToDefault();
-	desc.callback = NULL;
 
-	PhysicsManager* physMgr = world->getPhysicsManager();
-	initCapsuleControllerDesc(desc, physMgr);
+	desc.upDirection = PxVec3(0, 1, 0);
+	desc.callback = NULL;
+	desc.height = _height / PHYSICS2WORLD_SCALE;
+	desc.radius = _radius / PHYSICS2WORLD_SCALE;
+	desc.position.set(0,0,0);
+	desc.material = physMgr->getDefaultMaterial();
+	
+	
+	initCapsuleControllerMisc(desc, physMgr);
 	
 	_physController = physMgr->createCapsuleController(desc);
 
-	PxExtendedVec3 pos = PxExtendedVec3(position.x, position.y, position.z);
+	PxExtendedVec3 pos = PxExtendedVec3(position.x, position.y+_capsuleOffsetY, position.z);
 	_physController->setPosition(pos);
 
 	Action* initialAction = getInitialAction();
@@ -91,7 +92,7 @@ void Character::update(World* world, float totalTime, float dt)
 {
 	PxExtendedVec3 pos = _physController->getPosition();
 	GameObjectElement& e= getElement();
-	e.position = Ogre::Vector3(pos.x, pos.y, pos.z)*GAMEOBJECT_PHYSICS_SCALE;
+	e.position = Ogre::Vector3(pos.x, pos.y-_capsuleOffsetY, pos.z)*PHYSICS2WORLD_SCALE;
 	e.orientation = Ogre::Quaternion(_lookingAngle, Ogre::Vector3::UNIT_Y);
 	e.updateNode();
 

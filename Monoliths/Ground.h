@@ -31,7 +31,12 @@ protected:
 		MeshPtr mp = MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
 			plane, _size, _size, segments, segments, true, 1, tile, tile, Ogre::Vector3::UNIT_Z);
 		Entity* entity = sceneManager->createEntity(mp);
+
+#ifndef BASIC_GRAPHICS
+		entity->setMaterialName("Ground");
+#else
 		entity->setMaterialName("Ground_basic");
+#endif
 
 		PhysicsManager* physMgr = world->getPhysicsManager();
 

@@ -55,18 +55,7 @@ public:
 	
 	virtual bool mouseMoved(const MouseEvent &evt )
 	{
-		/*Ogre::Vector2 mousepos = Ogre::Vector2((float)evt.state.X.abs/(float)evt.state.width, (float)evt.state.Y.abs/(float)evt.state.height);
-		if (_lastMousepos.x == Math::POS_INFINITY)
-		{
-			_lastMousepos = mousepos;
-			return true;
-		}*/
-
 		_mouseMove = Ogre::Vector2(evt.state.X.rel, evt.state.Y.rel);
-
-		//_mouseMove = mousepos - _lastMousepos;
-		
-		//_cameraMan->injectMouseMove(evt);
 		return true;
 	}
 

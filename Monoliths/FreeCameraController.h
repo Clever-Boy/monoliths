@@ -29,9 +29,12 @@ public:
 
 	virtual void onUpdating(const FrameEvent& evt, Game* game)
 	{ 
+		//OutputDebugStringA("frameRenderingQueued\n");
 		_cameraMan.frameRenderingQueued(evt);
+
 		if (game->getKeyboard()->isKeyDown(KC_SPACE) && game->getTotalTime() - _lastBoxTime > 0.2)
 		{
+			OutputDebugString("PTYUUUUUUU\n");
 			_lastBoxTime = game->getTotalTime();
 			BoxObject* box = new BoxObject(_camera->getPosition(), _camera->getDirection().normalisedCopy()*30);
 			game->getWorld()->addGameObject(box);
@@ -40,6 +43,7 @@ public:
 
 	virtual bool keyPressed(const KeyEvent &evt)
 	{
+		OutputDebugStringA("keyPressed\n");
 		_cameraMan.injectKeyDown(evt);
 		return true;
 	}

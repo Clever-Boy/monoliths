@@ -4,7 +4,7 @@ vertex_program VS_Phong hlsl
 	entry_point VS_Phong
 	target vs_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -28,7 +28,7 @@ fragment_program PS_Phong hlsl
 	entry_point PS_Phong
 	target ps_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -52,7 +52,7 @@ fragment_program PS_PhongTextured hlsl
 	entry_point PS_PhongTextured
 	target ps_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -75,7 +75,7 @@ fragment_program PS_PhongToonshade hlsl
 	entry_point PS_PhongToonshade
 	target ps_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -99,7 +99,7 @@ fragment_program PS_PhongToonshadeSpecular hlsl
 	entry_point PS_PhongToonshadeSpecular
 	target ps_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -125,7 +125,7 @@ fragment_program PS_PhongToonshadeTextured hlsl
 	target ps_3_0
 
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -151,7 +151,7 @@ vertex_program VS_Quad hlsl
 	entry_point VS_Quad
 	target vs_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -164,7 +164,7 @@ fragment_program PS_Contour hlsl
 	source Postprocess.hlsl
 	entry_point PS_Contour
 	target ps_3_0
-	optimisation_level none
+	#optimisation_level none
 
 	default_params
 	{
@@ -177,7 +177,7 @@ fragment_program PS_Compose hlsl
 	source Postprocess.hlsl
 	entry_point PS_Compose
 	target ps_3_0
-	optimisation_level none
+	#optimisation_level none
 
 	default_params
 	{
@@ -192,7 +192,7 @@ vertex_program VS_DepthMap hlsl
 	entry_point VS_DepthMap
 	target vs_3_0
 
-	optimisation_level none
+	#optimisation_level none
 	
 	default_params
 	{
@@ -207,7 +207,7 @@ fragment_program PS_DepthMap hlsl
 	source Postprocess.hlsl
 	entry_point PS_DepthMap
 	target ps_3_0
-	optimisation_level none
+	#optimisation_level none
 
 	default_params
 	{
