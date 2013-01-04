@@ -16,6 +16,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="External Source Files">
+      <UniqueIdentifier>{6f31f126-15a6-4824-982e-bf25e3016c32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -102,6 +105,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Action.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\clipper\clipper.cpp">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\poly2tri\common\shapes.cc">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\poly2tri\sweep\advancing_front.cc">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\poly2tri\sweep\cdt.cc">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\poly2tri\sweep\sweep.cc">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\poly2tri\sweep\sweep_context.cc">
+      <Filter>External Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -16,7 +16,20 @@ private:
 
 	Ogre::Vector2 _planarPoints[4];
 	
+	bool checkPoint(float s, int i)
+	{
+		Ogre::Vector2& p = _planarPoints[i];
+		return p.x>-s && p.x < s && p.y>-s && p.y < s;
+	}
+
 public:
+
+	bool checkPosition(float mapSize)
+	{
+		float s = mapSize*0.5;
+		return checkPoint(s,0) && checkPoint(s,1) && checkPoint(s,2) && checkPoint(s,3);
+	}
+
 	Monolith(float a, float b, float c, float x, float y, float z, float rotAngle, float slant, float characterRadius, float characterHeight)
 		 : _position(x,y,z)
 	{
@@ -139,5 +152,10 @@ protected:
 	virtual float getCtrDetectionExponent()
 	{
 		return 2.2;
+	}
+
+	virtual void collectNavmeshElements(NavMesh* navMesh) 
+	{ 
+		navMesh->addPolygon(_planarPoints, 4);
 	}
 };

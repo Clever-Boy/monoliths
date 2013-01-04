@@ -5,6 +5,7 @@
 //#include "Ground.h"
 #include "PhysicsManager.h";
 //#include "Character.h"
+#include "NavMesh.h"
 
 using namespace Ogre;
 
@@ -27,6 +28,7 @@ private:
 	Ground* _ground;
 	Character* _puppie;
 	float _mapSize;
+	NavMesh _navMesh;
 
 	//typedef union
 	//{
@@ -38,6 +40,8 @@ private:
 
 	void createGameObjects();
 	void createLights();
+	void initNavMesh();
+	void initDebugObjects();
 
 /*
 	void initGameObjects()
@@ -96,7 +100,8 @@ public:
 	{
 		createLights();
 		createGameObjects();
-		//initGameObjects();
+		initNavMesh();
+		initDebugObjects();
 	}
 
 	String getNextId(String prefix = "object")

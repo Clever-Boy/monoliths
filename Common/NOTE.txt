@@ -1,2 +1,2 @@
-- Ogre SDK 1.8.1 comes here. (In folder OgreSDK_vc10_v1-8-1)
-- PhysX SDK comes here
+- Copy Ogre SDK 1.8.1 here. (In a folder named "OgreSDK_vc10_v1-8-1")
+- Copy PhysX SDK 3.2 here. (Folder name: "PhysX-3.2_PC_SDK_Core")

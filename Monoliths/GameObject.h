@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 #include "common.h"
-
+#include "NavMesh.h"
 
 using namespace Ogre;
 using namespace physx;
@@ -87,5 +87,6 @@ public:
 	virtual void act(World* world, float totalTime, float dt) { }
 	virtual void update(World* world, float totalTime, float dt);
 
-	virtual void collectPolygons(ClipperLib::Polygons& polygons) { }
+	virtual void collectNavmeshElements(NavMesh* navMesh) { }
+	//virtual void collectPolygons(ClipperLib::Polygons& polygons) { }
 };
