@@ -16,9 +16,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Clipper">
-      <UniqueIdentifier>{fd646f7b-35f4-4561-be10-79929100ab1e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -78,8 +75,8 @@
     <ClInclude Include="MeshGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Clipper\clipper.hpp">
-      <Filter>Clipper</Filter>
+    <ClInclude Include="NavMesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -106,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="Action.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Clipper\clipper.cpp">
-      <Filter>Clipper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

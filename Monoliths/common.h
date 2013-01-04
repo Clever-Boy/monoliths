@@ -1,6 +1,6 @@
 #pragma once
 #include "stdafx.h"
-#define BASIC_GRAPHICS
+//#define BASIC_GRAPHICS
 
 const float DEFAULT_CHARACTER_RADIUS = 30;
 const float MAX_CHARACTER_HEIGHT = 200;

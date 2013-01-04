@@ -108,11 +108,11 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="Action.h" />
     <ClInclude Include="BoxObject.h" />
     <ClInclude Include="Character.h" />
-    <ClInclude Include="Clipper\clipper.hpp" />
     <ClInclude Include="common.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="MeshGenerator.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="TPSCharacterController.h" />
@@ -129,9 +129,6 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
   <ItemGroup>
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="Character.cpp" />
-    <ClCompile Include="Clipper\clipper.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
