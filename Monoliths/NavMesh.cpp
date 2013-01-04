@@ -23,7 +23,8 @@ void NavMesh::addPolygon(Ogre::Vector2* polygonVertices, int vertexCount)
 
 class PointCollection 
 {
-	std::map<Point*, int> map;
+	typedef std::map<Point*, int> MapType;
+	MapType map;
 	int _counter;
 
 public:
@@ -43,6 +44,16 @@ public:
 	int indexOf(Point* point)
 	{
 		return map[point];
+	}
+
+	MapType::iterator begin()
+	{
+		return map.begin();
+	}
+
+	MapType::iterator end()
+	{
+		return map.end();
 	}
 
 	~PointCollection()
@@ -94,6 +105,22 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 
 	cdt->Triangulate();
 	std::vector<Triangle*> triangles = cdt->GetTriangles();
+
+	for (auto i = points.begin(); i != points.end(); i++)
+	{
+		Point& p = *(i->first);
+		_vertices.push_back(Ogre::Vector2(p.x, p.y));
+	}
+
+	for (auto i = triangles.begin(); i != triangles.end(); i++)
+	{
+		int idx0 = points.indexOf((*i)->GetPoint(0));
+		int idx1 = points.indexOf((*i)->GetPoint(1));
+		int idx2 = points.indexOf((*i)->GetPoint(2));
+		_triangles.push_back(idx0);
+		_triangles.push_back(idx1);
+		_triangles.push_back(idx2);
+	}
 
 	delete cdt;
 	//ClipperLib::Polygon

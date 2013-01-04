@@ -75,7 +75,7 @@ protected:
 		PxVec3 halfExt = PxVec3(_a, _b, _c)*0.5f / PHYSICS2WORLD_SCALE;
 
 		PxRigidStatic* actor = PxCreateStatic(*pxMgr->getPhysics(), PxTransform::createIdentity(), PxBoxGeometry(halfExt),
-			*pxMgr->getDefaultMaterial(), PxTransform(halfExt));
+			*pxMgr->getDefaultMaterial(), PxTransform(PxVec3(0, halfExt.y, 0)));
 		
 		addElement(_position, _orientation, entity, actor);
 
