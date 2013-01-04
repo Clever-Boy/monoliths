@@ -91,7 +91,7 @@ void Game::setupRenderSystem()
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 10000);
+	_world = new World(_sceneManager, _physicsManager, 5000); 
 	_world->init();
 }
 
@@ -103,12 +103,13 @@ void Game::setupInputSystem()
 	_window->getCustomAttribute("WINDOW", &windowHnd);
 	std::ostringstream windowHndStr;
 	windowHndStr << windowHnd;
+
 	pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
 
 	_inputManager = InputManager::createInputSystem(pl);
 
-	_keyboard = static_cast<OIS::Keyboard*>(_inputManager->createInputObject( OIS::OISKeyboard, true ));
-	_mouse = static_cast<OIS::Mouse*>(_inputManager->createInputObject( OIS::OISMouse, true ));
+	_keyboard =(OIS::Keyboard*)_inputManager->createInputObject(OIS::OISKeyboard, true);
+	_mouse = (OIS::Mouse*)_inputManager->createInputObject(OIS::OISMouse, true);
 
 	FreeCameraController* freeController = new FreeCameraController(_freeCamera);
 	addController(freeController);
