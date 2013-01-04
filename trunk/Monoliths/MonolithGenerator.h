@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "common.h"
 #include "Monolith.h"
 #include <random>
 
@@ -22,6 +23,8 @@ private:
 
 	float _slantScaledown;
 	float _lowering;
+	float _characterRadius;
+	float _characterHeight;
 
 	float getPositive(NormalDistribution dist)
 	{
@@ -35,7 +38,8 @@ public:
 	MonolithGenerator(float mapSize,
 		float sideMean, float sideSigma, 
 		float heightMean, float heightSigma, 
-		float scaleLambda, float slantLambda, float slantScaledown, float lowering)
+		float scaleLambda, float slantLambda, float slantScaledown, float lowering,
+		float characterRadius = DEFAULT_CHARACTER_RADIUS, float characterHeight = MAX_CHARACTER_HEIGHT)
 		: _engine(std::random_device()()),
 		  _sideDistribution(sideMean, sideSigma),
 		  _heightDistribution(heightMean, heightSigma),
@@ -44,13 +48,11 @@ public:
 		  _angleDistribution(0, Math::PI*2),
 		  _slantDistribution(slantLambda),
 		  _slantScaledown(slantScaledown),
-		  _lowering(lowering)
+		  _lowering(lowering),
+		  _characterRadius(characterRadius),
+		  _characterHeight(characterHeight)
 	{
-		
-		//std::chrono::high_resolution_clock()
 	}
-
-	
 
 	Monolith* createMonolith()
 	{
@@ -64,9 +66,9 @@ public:
 		float ang = _angleDistribution(_engine);
 
 		float slant = _slantDistribution(_engine)*_slantScaledown;
-		Vector3 up(slant, 1,0);
-		up.normalise();
+		//Vector3 up(slant, 1,0);
+		//up.normalise();
 
-		return new Monolith(a*s, b*s+_lowering, c*s, x, -_lowering, z, ang, up);
+		return new Monolith(a*s, b*s+_lowering, c*s, x, -_lowering, z, ang, slant, _characterRadius, _characterHeight);
 	}
 };

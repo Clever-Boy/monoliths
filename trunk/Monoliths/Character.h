@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "common.h"
 #include "GameObject.h"
 #include "PhysicsManager.h"
 #include "World.h"
@@ -33,7 +34,7 @@ public:
 		return _elements[0];
 	}
 
-	Character(float radius = 30, float height = 200, Ogre::Quaternion meshOrientation = Ogre::Quaternion::ZERO) 
+	Character(float radius = DEFAULT_CHARACTER_RADIUS, float height = 200, Ogre::Quaternion meshOrientation = Ogre::Quaternion::ZERO) 
 		: _radius(radius),
 		  _height(height),
 		  _capsuleOffsetY(height*0.5f/PHYSICS2WORLD_SCALE + 0.01f),

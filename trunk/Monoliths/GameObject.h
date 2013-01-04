@@ -15,6 +15,7 @@ struct GameObjectElement
 	Entity* entity;
 	PxRigidActor* actor;
 	SceneNode* node;
+	ElementType type;
 
 	void init(SceneNode* node, World* world);
 
@@ -52,13 +53,14 @@ protected:
 protected:
 
 	void addElement(const Ogre::Vector3& position, const Ogre::Quaternion& orientation,
-		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL)
+		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD)
 	{
 		GameObjectElement element;
 		element.position = position;
 		element.orientation = orientation;
 		element.entity = entity;
 		element.actor = actor;
+		element.type = type;
 
 		_elements.push_back(element);
 	}
@@ -72,8 +74,18 @@ public:
 		return _node;
 	}
 
+	void showOnly(ElementType type)
+	{
+		for (auto i = _elements.begin(); i != _elements.end(); i++)
+		{
+			i->node->setVisible((i->type & type) != 0);
+		}
+	}
+
 	void init(World* world);
 	
 	virtual void act(World* world, float totalTime, float dt) { }
 	virtual void update(World* world, float totalTime, float dt);
+
+	virtual void collectPolygons(ClipperLib::Polygons& polygons) { }
 };

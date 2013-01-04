@@ -26,3 +26,5 @@
 
 #include <OgreFontManager.h>
 #include <OgreTextAreaOverlayElement.h>
+
+#include "Clipper/clipper.hpp"

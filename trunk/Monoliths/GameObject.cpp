@@ -14,7 +14,7 @@ void GameObjectElement::init(SceneNode* node, World* world)
 	}
 
 	updateNode();
-
+	
 	if (actor != NULL)
 	{
 		PxQuat pxOrientation =  PxQuat(orientation.x, orientation.y, orientation.z, orientation.w);
