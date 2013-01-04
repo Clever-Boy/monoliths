@@ -14,10 +14,11 @@ class FreeCameraController : public GameController
 	Camera* _camera;
 
 	float _lastBoxTime;
+	bool _showDbg;
 
 public:
 	FreeCameraController(Camera* camera)
-		: _cameraMan(camera), _lastBoxTime(0)
+		: _cameraMan(camera), _lastBoxTime(0), _showDbg(false)
 	{
 		_camera = camera;
 	}
@@ -39,12 +40,18 @@ public:
 			BoxObject* box = new BoxObject(_camera->getPosition(), _camera->getDirection().normalisedCopy()*30);
 			game->getWorld()->addGameObject(box);
 		}
+
+		game->getWorld()->showOnly( _showDbg ? ET_MONOLITH_DBG : ET_STANDARD);
 	}
 
 	virtual bool keyPressed(const KeyEvent &evt)
 	{
 		OutputDebugStringA("keyPressed\n");
 		_cameraMan.injectKeyDown(evt);
+		if (evt.key == KC_X)
+		{
+			_showDbg = !_showDbg;
+		}
 		return true;
 	}
 

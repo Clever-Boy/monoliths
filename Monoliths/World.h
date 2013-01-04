@@ -90,6 +90,8 @@ public:
 		}
 	}
 
+	void showOnly(ElementType elementType);
+
 	void init()
 	{
 		createLights();

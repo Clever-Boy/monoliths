@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "common.h"
 #include "World.h"
 #include "Monolith.h"
 #include "Ground.h"
@@ -45,6 +46,14 @@ void World::createLights()
 	
 	_sceneManager->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
 	_sceneManager->setShadowFarDistance(10000);
+}
+
+void World::showOnly(ElementType elementType)
+{
+	for (auto i=_gameObjects.begin();i!=_gameObjects.end();i++)
+	{
+		(*i)->showOnly(elementType);
+	}
 }
 
 void World::createGameObjects()
