@@ -69,7 +69,15 @@ void World::createGameObjects()
 	for (int i = 0; i < n; i++)
 	{
 		Monolith* monolith = gen.createMonolith();
-		addGameObject(monolith);
+
+		if (monolith->checkPosition(_mapSize))
+		{
+			addGameObject(monolith);
+		}
+		else
+		{
+			delete monolith;
+		}
 	}
 	
 	_ground = new Ground(_mapSize, 500);
@@ -84,3 +92,15 @@ void World::createGameObjects()
 	
 }
 
+void World::initNavMesh()
+{
+	for (auto i = _gameObjects.begin(); i != _gameObjects.end(); i++)
+	{
+		(*i)->collectNavmeshElements(&_navMesh);
+	}
+	_navMesh.init(Ogre::Vector2(_mapSize, _mapSize));
+}
+
+void World::initDebugObjects()
+{
+}

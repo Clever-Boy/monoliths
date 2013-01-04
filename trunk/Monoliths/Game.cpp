@@ -91,7 +91,7 @@ void Game::setupRenderSystem()
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 40000);
+	_world = new World(_sceneManager, _physicsManager, 10000);
 	_world->init();
 }
 

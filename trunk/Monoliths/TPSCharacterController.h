@@ -49,9 +49,9 @@ public:
 	virtual void onUpdating(const FrameEvent& evt, Game* game) 
 	{ 
 		float dt = evt.timeSinceLastFrame;
-		_character->turn(-_mouseMove.x*dt*0.5);
+		_character->turn(-_mouseMove.x*dt*0.2);
 		
-		_mouseHeight+=_mouseMove.y*dt*70;
+		_mouseHeight+=_mouseMove.y*dt*40;
 
 		_character->clearActions();
 		//String zzz = StringConverter::toString(_frameCounter++)+String("\n");
