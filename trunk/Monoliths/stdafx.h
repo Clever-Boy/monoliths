@@ -27,4 +27,6 @@
 #include <OgreFontManager.h>
 #include <OgreTextAreaOverlayElement.h>
 
-#include "Clipper/clipper.hpp"
+#include "../Common/clipper/clipper.hpp"
+#include "../Common/poly2tri/poly2tri.h"
+
