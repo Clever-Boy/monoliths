@@ -52,6 +52,11 @@ protected:
 
 protected:
 
+	void addElement(Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD)
+	{
+		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, actor, type);
+	}
+
 	void addElement(const Ogre::Vector3& position, const Ogre::Quaternion& orientation,
 		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD)
 	{

@@ -3,10 +3,30 @@
 
 using namespace p2t;
 
-const float NAVMESH_POLY_SCALE = 1;
+const float NAVMESH_POLY_SCALE = 16;
 
 typedef boost::shared_ptr<Point> PointPtr;
 typedef std::vector<Point*> PointVector;
+
+TriangleConnection::TriangleConnection(NavMeshTriangle* tri0)
+	: tri0(tri0), tri1(NULL)
+{
+}
+
+void TriangleConnection::setTri1(NavMeshTriangle* tri)
+{
+	tri1 = tri;
+	tri0->addConnection(this);
+	tri1->addConnection(this);
+	distance = tri0->center.distance(tri1->center);
+}
+
+NavMeshTriangle::NavMeshTriangle(const NavMesh& navMesh, int i0, int i1, int i2)
+	: idx0(i0), idx1(i1), idx2(i2)
+{
+	center = navMesh.getVertex(i0)+navMesh.getVertex(i1)+navMesh.getVertex(i2);
+	center /= 3;
+}
 
 void NavMesh::addPolygon(Ogre::Vector2* polygonVertices, int vertexCount)
 {
@@ -21,43 +41,132 @@ void NavMesh::addPolygon(Ogre::Vector2* polygonVertices, int vertexCount)
 	_polygons.push_back(polygon);
 }
 
+float NavmeshGraphFunctionContainer::getHeuristics(NavMeshTriangle*& n1, NavMeshTriangle*& n2)
+{
+	return n1->center.distance(n2->center);
+}
+
+void NavmeshGraphFunctionContainer::getSuccessors(NavMeshTriangle*& n, std::vector<NavMeshTriangle*>* s, std::vector<float>* c)
+{
+	for (auto i = n->connections.begin(); i != n->connections.end(); i++)
+	{
+		NavMeshTriangle* succ = (*i)->getOppositeTriangle(n);
+		s->push_back(succ);
+		c->push_back((*i)->distance);
+	}
+}
+
 class PointCollection 
 {
-	typedef std::map<Point*, int> MapType;
-	MapType map;
-	int _counter;
+	//typedef std::map<Point*, int> MapType;
+	//MapType map;
+	std::map<Point*, int> _points2Indices;
+	std::vector<Point*> _points;
+	//int _counter;
 
 public:
 
 	PointCollection()
-		: _counter(0)
 	{
 	}
 
 	Point* createPoint(double x, double y)
 	{
 		Point* point = new Point(x,y);
-		map[point] = _counter++;
+		_points2Indices[point] = _points.size();
+		_points.push_back(point);
 		return point;
 	}
 
 	int indexOf(Point* point)
 	{
-		return map[point];
+		return _points2Indices[point];
 	}
 
-	MapType::iterator begin()
-	{
-		return map.begin();
+	int size() 
+	{ 
+		return _points.size(); 
 	}
 
-	MapType::iterator end()
-	{
-		return map.end();
+	Point* operator[] (int idx) 
+	{ 
+		return _points[idx];
 	}
 
 	~PointCollection()
 	{
+	}
+};
+
+struct TriangleConnectionData
+{
+	int idx0;
+	int idx1;
+	
+	TriangleConnectionData(int i0, int i1)
+		: idx0(i0), idx1(i1)
+	{
+	}
+
+	bool operator ==(const TriangleConnectionData& other) const
+	{
+		return idx0 == other.idx0 && idx1 == other.idx1 ||
+			idx1 == other.idx0 && idx0 == other.idx1;
+	}
+
+	
+
+	//static bool operator==(const TriangleConnectionData& d0, const TriangleConnectionData& d1) { return true;}
+	//static bool operator[]
+};
+
+class TriangleConnectionDataHasher
+{
+public:
+	size_t operator()(const TriangleConnectionData& data) const
+	{
+		int a = std::min(data.idx0, data.idx1);
+		int b = std::max(data.idx0, data.idx1);
+		size_t hash = a*31 + b;
+		return hash;
+	}
+};
+
+//typedef std::unordered_map<TriangleConnectionData, TriangleConnection*, TriangleConnectionDataHasher> ConnectionMapType;
+class ConnectionMap 
+{
+	typedef std::unordered_map<TriangleConnectionData, TriangleConnection*, TriangleConnectionDataHasher> TMap;
+
+	TMap _map;
+	std::vector<TriangleConnection*> _connections;
+
+public:
+
+	void addConnection(NavMeshTriangle* triangle, int i0, int i1)
+	{
+		TriangleConnectionData data = TriangleConnectionData(i0, i1);
+		TMap::iterator bitch = _map.find(data);
+		if (bitch == _map.end())
+		{
+			TriangleConnection* conn = new TriangleConnection(triangle);
+			_connections.push_back(conn);
+			_map[data] = conn;
+		}
+		else
+		{
+			bitch->second->setTri1(triangle);
+		}
+	}
+
+	std::vector<TriangleConnection*> getConnections() const
+	{
+		std::vector<TriangleConnection*> result;
+		for (auto i = _connections.begin(); i != _connections.end(); i++)
+		{
+			if ((*i)->tri1 != NULL)
+				result.push_back(*i);
+		}
+		return result;
 	}
 };
 
@@ -68,7 +177,7 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 	
 	Polygons result;
 
-	c.Execute(ctUnion, result);
+	c.Execute(ctUnion, result, pftNonZero, pftNonZero);
 	
 	PointVector contour;
 	
@@ -86,11 +195,37 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 
 	CDT* cdt = new CDT(contour);
 
+	/*
+	for (auto i = _polygons.begin(); i != _polygons.end(); i++)
+	{
+		PointVector hole;
+		//std::reverse(i->begin(), i->end());
+
+
+		double area = Area(*i);
+		String s = "KAKAAAA "+ StringConverter::toString((float)area)+"\n";
+		
+		OutputDebugString(s.c_str());
+
+		for (auto j = i->begin(); j != i->end(); j++)
+		{
+			Point* p = points.createPoint(j->X, j->Y);
+			(*p)*=(1/NAVMESH_POLY_SCALE);
+			p->y*=-1;
+			hole.push_back(p);
+		}
+		
+		cdt->AddHole(hole);
+	}
+	*/
+
+
 	for (auto i = result.begin(); i != result.end(); i++)
 	{
 		if (Area(*i) > 0)
 		{
 			PointVector hole;
+
 			for (auto j = i->begin(); j != i->end(); j++)
 			{
 				Point* p = points.createPoint(j->X, j->Y);
@@ -103,29 +238,66 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 		}
 	}
 
+
 	cdt->Triangulate();
 	std::vector<Triangle*> triangles = cdt->GetTriangles();
 
-	for (auto i = points.begin(); i != points.end(); i++)
+	//Point
+
+	for (int i = 0; i < points.size(); i++)
 	{
-		Point& p = *(i->first);
-		_vertices.push_back(Ogre::Vector2(p.x, p.y));
+		Point* p = points[i];
+		_vertices.push_back(Ogre::Vector2(p->x, p->y));
 	}
 
 	for (auto i = triangles.begin(); i != triangles.end(); i++)
 	{
-		int idx0 = points.indexOf((*i)->GetPoint(0));
-		int idx1 = points.indexOf((*i)->GetPoint(1));
-		int idx2 = points.indexOf((*i)->GetPoint(2));
-		_triangles.push_back(idx0);
-		_triangles.push_back(idx1);
-		_triangles.push_back(idx2);
+		Point* p0 = (*i)->GetPoint(0);
+		Point* p1 = (*i)->GetPoint(1);
+		Point* p2 = (*i)->GetPoint(2);
+
+		int idx0 = points.indexOf(p0);
+		int idx1 = points.indexOf(p1);
+		int idx2 = points.indexOf(p2);
+		_triangles.push_back(NavMeshTriangle(*this, idx2, idx1, idx0));
 	}
 
 	delete cdt;
+
+	ConnectionMap connectionMap;
+
+	for (auto i = _triangles.begin(); i != _triangles.end(); i++)
+	{
+		NavMeshTriangle& tri = *i;
+		
+		connectionMap.addConnection(&tri, tri.idx0, tri.idx1);
+		connectionMap.addConnection(&tri, tri.idx1, tri.idx2);
+		connectionMap.addConnection(&tri, tri.idx2, tri.idx0);
+		//NavMeshTriangle* apad = kalauzlany->second->tri0;
+	}
+
+	_triangleConnections = connectionMap.getConnections();
+
 	//ClipperLib::Polygon
 
 	//Point* contour = new Point[
 
-	
+}
+
+std::vector<NavMeshTriangle*> NavMesh::findPathBetween(const NavMeshTriangle* a, const NavMeshTriangle* b)
+{
+	GenericSearchGraphDescriptor<NavMeshTriangle*, float> graph;
+	graph.func_container = &_functionContainer;
+	graph.hashTableSize = 128;
+	graph.SeedNode = const_cast<NavMeshTriangle*>(a);
+	graph.TargetNode = const_cast<NavMeshTriangle*>(b);
+
+	A_star_planner<NavMeshTriangle*, float> planner;
+
+	planner.init(graph);
+	planner.plan();
+
+	std::vector<std::vector<NavMeshTriangle*>> paths = planner.getPlannedPaths();
+	return paths[0];
+	//std::vector<NavMeshTriangle*> result;
 }

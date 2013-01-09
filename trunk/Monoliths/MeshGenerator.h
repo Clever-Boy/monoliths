@@ -12,10 +12,10 @@ public:
 
 	MeshGenerator() : q(NULL), currentNormal(Ogre::Vector3::UNIT_Y) { }
 
-	void begin(String name, String materialName)
+	void begin(String name, String materialName, RenderOperation::OperationType operationType = RenderOperation::OT_TRIANGLE_LIST)
 	{
 		q = new ManualObject(name);
-		q->begin(materialName);
+		q->begin(materialName, operationType);
 		OFFSET(0,0,0);
 	}
 

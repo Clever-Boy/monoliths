@@ -91,7 +91,7 @@ void Game::setupRenderSystem()
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 5000); 
+	_world = new World(_sceneManager, _physicsManager, 30000); 
 	_world->init();
 }
 
@@ -111,7 +111,7 @@ void Game::setupInputSystem()
 	_keyboard =(OIS::Keyboard*)_inputManager->createInputObject(OIS::OISKeyboard, true);
 	_mouse = (OIS::Mouse*)_inputManager->createInputObject(OIS::OISMouse, true);
 
-	FreeCameraController* freeController = new FreeCameraController(_freeCamera);
+	FreeCameraController* freeController = new FreeCameraController(_freeCamera, _world);
 	addController(freeController);
 	
 	TPSCharacterController* puppieController = new TPSCharacterController(_world, _world->getPuppie(), 

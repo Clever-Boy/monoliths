@@ -17,6 +17,7 @@
 #include <memory.h>
 #include <tchar.h>
 
+
 #include <Ogre.h>
 #include <OIS.h>
 //#include <Terrain/OgreTerrain.h>
@@ -29,4 +30,8 @@
 
 #include "../Common/clipper/clipper.hpp"
 #include "../Common/poly2tri/poly2tri.h"
+
+#include <yagsbpl_base.h>
+#include <planners/A_star.h>
+
 

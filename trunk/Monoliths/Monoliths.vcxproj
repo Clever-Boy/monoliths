@@ -52,7 +52,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\;%(AdditionalIncludeDirectories)$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\;$(SolutionDir)\common\yagsbpl\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm192 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -81,7 +81,7 @@ xcopy "$(SolutionDir)\common\plugins_d.cfg" "$(OutDir)" /F /R /Y /I</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;%(AdditionalIncludeDirectories)$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\boost;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OGRE;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\include\OIS;$(SolutionDir)\common\OgreSDK_vc10_v1-8-1\boost\;$(SolutionDir)\common\yagsbpl\;$(SolutionDir)\common\PhysX-3.2_PC_SDK_Core\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zm256 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -113,6 +113,7 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="MeshGenerator.h" />
     <ClInclude Include="NavMesh.h" />
+    <ClInclude Include="NavMeshDebugObject.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="TPSCharacterController.h" />
