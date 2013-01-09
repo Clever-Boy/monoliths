@@ -22,7 +22,7 @@ protected:
 	virtual void initImpl(World* world)
 	{
 		float tile = _size / _textureSize;
-		int segments = (int)(tile*_segmentMultiplicator);
+		int segments = std::max((int)(tile*_segmentMultiplicator), 1);
 		
 		SceneManager* sceneManager = world->getSceneManager();
 

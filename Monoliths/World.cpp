@@ -7,6 +7,8 @@
 #include "BoxObject.h"
 #include "Robot.h"
 
+#include "NavMeshDebugObject.h"
+
 using namespace Ogre;
 
 extern "C" {
@@ -103,4 +105,5 @@ void World::initNavMesh()
 
 void World::initDebugObjects()
 {
+	addGameObject(new NavMeshDebugObject(&_navMesh));
 }

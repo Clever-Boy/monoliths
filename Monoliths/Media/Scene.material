@@ -293,6 +293,34 @@ material Monolith_basic
 	}
 }
 
+material NavMeshDbg
+{
+	technique main
+	{
+		pass main
+		{
+			polygon_mode wireframe
+			ambient 0.05 0.00 0.00 1
+			diffuse 2.0 0.0 0.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
+material NavMeshConnectionDbg
+{
+	technique main
+	{
+		pass main
+		{
+			polygon_mode wireframe
+			ambient 0.00 0.00 0.05 1
+			diffuse 0.0 0.0 1.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
 material Ground_basic
 {
 	technique main

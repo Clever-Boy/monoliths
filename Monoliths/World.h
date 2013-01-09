@@ -67,6 +67,11 @@ public:
 		_rootNode = _sceneManager->getRootSceneNode();
 	}
 	
+	NavMesh& getNavMesh()
+	{
+		return _navMesh;
+	}
+
 	Character* getPuppie()
 	{
 		return _puppie;

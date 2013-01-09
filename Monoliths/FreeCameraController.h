@@ -4,6 +4,7 @@
 #include "GameController.h"
 #include "World.h"
 #include "BoxObject.h"
+#include "NavMesh.h"
 
 using namespace Ogre;
 using namespace OIS;
@@ -15,12 +16,14 @@ class FreeCameraController : public GameController
 
 	float _lastBoxTime;
 	bool _showDbg;
+	World* _world;
 
 public:
-	FreeCameraController(Camera* camera)
+	FreeCameraController(Camera* camera, World* world)
 		: _cameraMan(camera), _lastBoxTime(0), _showDbg(false)
 	{
 		_camera = camera;
+		_world = world;
 	}
 
 	virtual Camera* getCamera()
@@ -51,6 +54,18 @@ public:
 		if (evt.key == KC_X)
 		{
 			_showDbg = !_showDbg;
+		}
+		else if (evt.key == KC_P)
+		{
+			NavMesh& navMesh = _world->getNavMesh();
+			const std::vector<NavMeshTriangle>& triangles = navMesh.getTriangles();
+			int triIdx1 = std::rand() / triangles.size();
+			int triIdx2 = std::rand() / triangles.size();
+
+			const NavMeshTriangle& tri1 = triangles[triIdx1];
+			const NavMeshTriangle& tri2 = triangles[triIdx2];
+
+			std::vector<NavMeshTriangle*> path = navMesh.findPathBetween(&tri1, &tri2);
 		}
 		return true;
 	}
