@@ -83,6 +83,17 @@ public:
 		gameObject->init(this);
 	}
 
+	void removeGameObject(GameObject* gameObject)
+	{
+		//std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
+		auto i = std::find(_gameObjects.begin(), _gameObjects.end(), gameObject);
+		_gameObjects.erase(i);
+		_sceneManager->getRootSceneNode()->removeChild(gameObject->getNode());
+		
+		//std::remove(_gameObjects.
+		//_gameObjects.erase(
+	}
+
 	void act(float totalTime, float dt)
 	{
 		for (auto i = _gameObjects.begin();i != _gameObjects.end(); i++)
@@ -134,5 +145,28 @@ public:
 	Ground* getGround()
 	{
 		return _ground;
+	}
+
+	GameObject* pickNearest(const Ogre::Ray& ray)
+	{
+		return pickNearest(ray, Ogre::Vector3());
+	}
+
+	
+	GameObject* pickNearest(const Ogre::Ray& ray, Ogre::Vector3& impact)
+	{
+		Ogre::Vector3 pos = ray.getOrigin();
+		Ogre::Vector3 dir = ray.getDirection();
+		
+		
+		PxActor* actor = _physicsManager->pickNearestActor(ray, impact);
+		if (actor != NULL)
+		{
+			return (GameObject*)actor->userData;
+		}
+		else
+		{
+			return NULL;
+		}
 	}
 };

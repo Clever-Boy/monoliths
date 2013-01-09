@@ -71,6 +71,8 @@ struct NavMeshTriangle
 		return this == &other;
 	}
 
+	const Ogre::Vector2& getPosition(int i, const NavMesh& navMesh);
+
 	~NavMeshTriangle()
 	{
 		/*OutputDebugString("NEEE PUSZULOOOK\n");
@@ -78,6 +80,8 @@ struct NavMeshTriangle
 		idx1 = -42;
 		idx2 = -42;*/
 	}
+
+	bool containsPoint(const Ogre::Vector2& p, const NavMesh& navMesh);
 
 };
 
@@ -117,6 +121,18 @@ public:
 	}
 
 	std::vector<NavMeshTriangle*> findPathBetween(const NavMeshTriangle* a, const NavMeshTriangle* b);
+
+	NavMeshTriangle* findTriangleOfPoint(const Ogre::Vector2& point)
+	{
+		for (auto i = _triangles.begin(); i != _triangles.end(); i++)
+		{
+			if (i->containsPoint(point, *this))
+			{
+				return &(*i);
+			}
+		}
+		return NULL;
+	}
 };
 
 
