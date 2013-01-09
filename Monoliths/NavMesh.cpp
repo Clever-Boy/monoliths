@@ -28,6 +28,35 @@ NavMeshTriangle::NavMeshTriangle(const NavMesh& navMesh, int i0, int i1, int i2)
 	center /= 3;
 }
 
+const Ogre::Vector2& NavMeshTriangle::getPosition(int i, const NavMesh& navMesh)
+{
+	int idx;
+	if (i == 0) idx = idx0;
+	else if (i == 1) idx = idx1;
+	else idx = idx2;
+	return navMesh.getVertices()[idx];
+}
+
+bool NavMeshTriangle::containsPoint(const Ogre::Vector2& p, const NavMesh& navMesh)
+{
+	Vector2 v0 = getPosition(0, navMesh);
+	Vector2 v1 = getPosition(1, navMesh);
+	Vector2 v2 = getPosition(2, navMesh);
+		
+	Vector2 p0 = p-v0;
+	Vector2 p1 = p-v1;
+	Vector2 p2 = p-v2;
+
+	Vector2 d0 = v1-v0;
+	Vector2 d1 = v2-v1;
+	Vector2 d2 = v0-v2;
+
+	if (d0.crossProduct(p0) > 0) return false;
+	if (d1.crossProduct(p1) > 0) return false;
+	if (d2.crossProduct(p2) > 0) return false;
+	return true;
+}
+
 void NavMesh::addPolygon(Ogre::Vector2* polygonVertices, int vertexCount)
 {
 	ClipperLib::Polygon polygon;
@@ -195,30 +224,6 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 
 	CDT* cdt = new CDT(contour);
 
-	/*
-	for (auto i = _polygons.begin(); i != _polygons.end(); i++)
-	{
-		PointVector hole;
-		//std::reverse(i->begin(), i->end());
-
-
-		double area = Area(*i);
-		String s = "KAKAAAA "+ StringConverter::toString((float)area)+"\n";
-		
-		OutputDebugString(s.c_str());
-
-		for (auto j = i->begin(); j != i->end(); j++)
-		{
-			Point* p = points.createPoint(j->X, j->Y);
-			(*p)*=(1/NAVMESH_POLY_SCALE);
-			p->y*=-1;
-			hole.push_back(p);
-		}
-		
-		cdt->AddHole(hole);
-	}
-	*/
-
 
 	for (auto i = result.begin(); i != result.end(); i++)
 	{
@@ -278,10 +283,33 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 
 	_triangleConnections = connectionMap.getConnections();
 
-	//ClipperLib::Polygon
+	/*
+	Vector2 p = Vector2(10,5);
+	Vector2 v0 = Vector2(0,0);
+	Vector2 v1 = Vector2(10,0);
+	Vector2 v2 = Vector2(5,10);
+		
+	Vector2 p0 = p-v0;
+	Vector2 p1 = p-v1;
+	Vector2 p2 = p-v2;
 
-	//Point* contour = new Point[
+	Vector2 d0 = v1-v0;
+	Vector2 d1 = v2-v1;
+	Vector2 d2 = v0-v2;
 
+	bool contains = true;
+	float c0 = d0.crossProduct(p0);
+	float c1 = d1.crossProduct(p1);
+	float c2 = d2.crossProduct(p2);
+
+	if (c0 < 0) contains = false;
+	if (c1 < 0) contains = false;
+	if (c2 < 0) contains = false;
+	
+	if (contains)
+		OutputDebugString("jeeee\n");
+	else
+		OutputDebugString("Neeeee\n");*/
 }
 
 std::vector<NavMeshTriangle*> NavMesh::findPathBetween(const NavMeshTriangle* a, const NavMeshTriangle* b)

@@ -23,7 +23,7 @@ struct GameObjectElement
 	void updateNode();
 };
 
-extern const float PHYSICS2WORLD_SCALE;
+
 
 class GameObject
 {
@@ -93,5 +93,17 @@ public:
 	virtual void update(World* world, float totalTime, float dt);
 
 	virtual void collectNavmeshElements(NavMesh* navMesh) { }
+
+	void dbgMark()
+	{
+		for (auto i = _elements.begin(); i != _elements.end(); i++)
+		{
+			Entity* entity = (*i).entity;
+			if (entity != NULL)
+			{
+				entity->setMaterialName("Marked");
+			}
+		}
+	}
 	//virtual void collectPolygons(ClipperLib::Polygons& polygons) { }
 };

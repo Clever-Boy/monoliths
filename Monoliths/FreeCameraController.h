@@ -5,6 +5,8 @@
 #include "World.h"
 #include "BoxObject.h"
 #include "NavMesh.h"
+#include "NavMeshDebugObject.h"
+#include <random>
 
 using namespace Ogre;
 using namespace OIS;
@@ -18,10 +20,15 @@ class FreeCameraController : public GameController
 	bool _showDbg;
 	World* _world;
 
+	PathDebugObject* _kakkancs;
+
+	std::default_random_engine _rnd;
 public:
 	FreeCameraController(Camera* camera, World* world)
-		: _cameraMan(camera), _lastBoxTime(0), _showDbg(false)
+		: _cameraMan(camera), _lastBoxTime(0), _showDbg(false), _kakkancs(NULL),
+		_rnd(std::random_device()())
 	{
+		
 		_camera = camera;
 		_world = world;
 	}
@@ -43,8 +50,14 @@ public:
 			BoxObject* box = new BoxObject(_camera->getPosition(), _camera->getDirection().normalisedCopy()*30);
 			game->getWorld()->addGameObject(box);
 		}
-
-		game->getWorld()->showOnly( _showDbg ? ET_MONOLITH_DBG : ET_STANDARD);
+		if (_kakkancs != NULL)
+		{
+			_world->showOnly(ET_PATH_DBG);
+		}
+		else
+		{
+			_world->showOnly(_showDbg ? ET_MONOLITH_DBG : ET_STANDARD );
+		}
 	}
 
 	virtual bool keyPressed(const KeyEvent &evt)
@@ -54,18 +67,33 @@ public:
 		if (evt.key == KC_X)
 		{
 			_showDbg = !_showDbg;
+			if (_kakkancs != NULL)
+			{
+				_world->removeGameObject(_kakkancs);
+			}
+			_kakkancs = NULL;
 		}
 		else if (evt.key == KC_P)
 		{
 			NavMesh& navMesh = _world->getNavMesh();
 			const std::vector<NavMeshTriangle>& triangles = navMesh.getTriangles();
-			int triIdx1 = std::rand() / triangles.size();
-			int triIdx2 = std::rand() / triangles.size();
+
+			int triIdx1 = _rnd() % triangles.size();
+			int triIdx2 = _rnd() % triangles.size();
 
 			const NavMeshTriangle& tri1 = triangles[triIdx1];
 			const NavMeshTriangle& tri2 = triangles[triIdx2];
 
 			std::vector<NavMeshTriangle*> path = navMesh.findPathBetween(&tri1, &tri2);
+
+			if (_kakkancs != NULL)
+			{
+				_world->removeGameObject(_kakkancs);
+			}
+
+			_kakkancs = new PathDebugObject(path);
+			_world->addGameObject(_kakkancs);
+			//_world->showOnly(ET_MONOLITH_DBG);
 		}
 		return true;
 	}
@@ -85,6 +113,27 @@ public:
 	virtual bool mousePressed(const MouseEvent &evt, MouseButtonID id )
 	{
 		_cameraMan.injectMouseDown(evt, id);
+
+		Ogre::Ray ray = Ogre::Ray(_camera->getPosition(),  _camera->getDirection());
+
+		Ogre::Vector3 impact;
+		GameObject* obj = _world->pickNearest(ray, impact);
+		if (obj == NULL) return true;
+
+		if (_showDbg)
+		{
+			Ogre::Vector2 p = Ogre::Vector2(impact.x, impact.z);
+			NavMeshTriangle* tri = _world->getNavMesh().findTriangleOfPoint(p);
+			if (tri != NULL)
+			{
+				TriangleDebugObject* obj = new TriangleDebugObject(tri, &_world->getNavMesh());
+				_world->addGameObject(obj);
+			}
+		}
+		else
+		{
+			obj->dbgMark();
+		}
 		return true;
 	}
 

@@ -3,8 +3,6 @@
 #include "GameObject.h"
 #include "World.h"
 
-const float PHYSICS2WORLD_SCALE = 100;
-
 void GameObjectElement::init(SceneNode* node, World* world)
 {
 	this->node = node;
@@ -57,6 +55,11 @@ void GameObject::init(World* world)
 			SceneNode* child = _node->createChildSceneNode(world->getNextId("object_"));
 			child->setScale(scale);
 			(*i).init(child, world);
+
+			if ((*i).actor != NULL)
+			{
+				(*i).actor->userData = this;
+			}
 
 			for (int j = 0; j < (*i).entity->getNumSubEntities();j++)
 			{

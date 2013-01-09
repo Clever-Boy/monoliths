@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+#include "common.h"
 
 using namespace physx;
 
@@ -53,6 +54,28 @@ public:
 	}
 
 	void setupPVD();
+
+	PxRigidActor* pickNearestActor(const Ogre::Ray& ray, Ogre::Vector3& impact)
+	{
+		
+		PxVec3 origin = PxVec3(ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
+		origin /= PHYSICS2WORLD_SCALE;
+		PxVec3 dir = PxVec3(ray.getDirection().x, ray.getDirection().y, ray.getDirection().z);
+		const PxSceneQueryFlags outputFlags = PxSceneQueryFlag::eDISTANCE | PxSceneQueryFlag::eIMPACT;
+
+		PxRaycastHit hit;
+
+		if (_scene->raycastSingle(origin, dir, 100000, outputFlags, hit))
+		{
+			impact = Ogre::Vector3(hit.impact.x, hit.impact.y, hit.impact.z)*PHYSICS2WORLD_SCALE;
+			PxRigidActor& result = hit.shape->getActor();
+			return &result;
+		}
+		else
+		{
+			return NULL;
+		}
+	}
 
 	PhysicsManager();
 	~PhysicsManager();

@@ -5,7 +5,6 @@
 #include "Action.h"
 #include "Character.h"
 
-
 using namespace Ogre;
 
 class TPSCharacterController : public GameController
