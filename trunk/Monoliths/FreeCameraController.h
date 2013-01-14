@@ -86,30 +86,18 @@ public:
 		if (evt.key == KC_X)
 		{
 			_state=(State)((_state + 1) % 3);
-			
 		}
 		else if (evt.key == KC_P)
 		{
-
-			NavMesh& navMesh = _world->getNavMesh();
-			const std::vector<NavMeshTriangle>& triangles = navMesh.getTriangles();
+			const std::vector<NavMeshTriangle>& triangles = _world->getNavMesh().getTriangles();
 
 			int triIdx1 = _rnd() % triangles.size();
 			int triIdx2 = _rnd() % triangles.size();
-
-			const NavMeshTriangle& tri1 = triangles[triIdx1];
-			const NavMeshTriangle& tri2 = triangles[triIdx2];
-
-			//std::vector<NavMeshTriangle*> path = navMesh.findPathBetween(&tri1, &tri2);
-			TrianglePath* path = _world->getPathFinder()->findPathBeetween(&tri1, &tri2);
-			if (_kakkancs != NULL)
-			{
-				_world->removeGameObject(_kakkancs);
-			}
-			_kakkancs = new PathDebugObject(path, &navMesh);
-			_world->addGameObject(_kakkancs);
-			_state == ST_PATH;
-			//_world->showOnly(ET_MONOLITH_DBG);
+			doShowPath(triIdx1, triIdx2);
+		}
+		else if (evt.key == KC_U)
+		{
+			doShowPath(1, 4);
 		}
 		else if (evt.key >= KC_1 && evt.key <= KC_0)
 		{
@@ -118,6 +106,25 @@ public:
 			doPickRay(raj);
 		}
 		return true;
+	}
+
+	void doShowPath(int triIdx1, int triIdx2)
+	{
+		NavMesh& navMesh = _world->getNavMesh();
+		const std::vector<NavMeshTriangle>& triangles = navMesh.getTriangles();
+		
+		const NavMeshTriangle& tri1 = triangles[triIdx1];
+		const NavMeshTriangle& tri2 = triangles[triIdx2];
+
+		//std::vector<NavMeshTriangle*> path = navMesh.findPathBetween(&tri1, &tri2);
+		TrianglePath* path = _world->getPathFinder()->findPathBeetween(&tri1, &tri2);
+		if (_kakkancs != NULL)
+		{
+			_world->removeGameObject(_kakkancs);
+		}
+		_kakkancs = new PathDebugObject(path, &navMesh);
+		_world->addGameObject(_kakkancs);
+		_state == ST_PATH;
 	}
 
 	virtual bool keyReleased(const KeyEvent &evt)

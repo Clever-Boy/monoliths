@@ -340,8 +340,8 @@ std::vector<NavMeshTriangle*> NavMesh::findPathBetween(const NavMeshTriangle* a,
 	GenericSearchGraphDescriptor<NavMeshTriangle*, float> graph;
 	graph.func_container = &_functionContainer;
 	graph.hashTableSize = 128;
-	graph.SeedNode = const_cast<NavMeshTriangle*>(a);
-	graph.TargetNode = const_cast<NavMeshTriangle*>(b);
+	graph.SeedNode = const_cast<NavMeshTriangle*>(b);
+	graph.TargetNode = const_cast<NavMeshTriangle*>(a);
 
 	A_star_planner<NavMeshTriangle*, float> planner;
 

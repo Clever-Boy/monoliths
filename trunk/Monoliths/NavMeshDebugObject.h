@@ -75,32 +75,32 @@ public:
 	{
 	}
 
+	void end(World* world, const String& name)
+	{
+		Ogre::MeshPtr mesh = MeshGenerator::end(world->getNextId("mesh"));
+		Entity* entity = world->getSceneManager()->createEntity(world->getNextId(name), mesh);
+		addElement(entity, NULL, ET_PATH_DBG);
+	}
+
 	virtual void initImpl(World* world)
 	{
 		begin("NavMeshPathDbg", "NavMeshPathDbg", RenderOperation::OT_LINE_STRIP);
 		N(Ogre::Vector3::UNIT_Y);
-
 		const std::vector<TriangleConnection*> connections = _path->getConnections();
-
-		for (auto i = connections.begin(); i != connections.end(); i++)
-		{
-			const Ogre::Vector2& p = (*i)->tri0->center;
-			V(p.x, 0, p.y);
-		}
-		const Ogre::Vector2& p = connections.back()->tri1->center;
-		V(p.x, 0, p.y);
-
-		/*
 		for (auto i = _path->getTriangles().begin(); i != _path->getTriangles().end(); i++)
 		{
-			Ogre::Vector2 p = (*i)->center;
-			V(p.x, 0, p.y);
+			V((*i)->center);
 		}
-		*/
+		end(world, "pathDbgObj");
+
+		begin("NavMeshEdgeDbg","NavMeshEdgeDbg", RenderOperation::OT_LINE_STRIP);
+		for (auto i = connections.begin(); i != connections.end(); i++)
+		{
+			V((*i)->getPointA(_navMesh));
+			V((*i)->getPointB(_navMesh));
+		}
+		end(world, "navmeshEdge");
 		
-		Ogre::MeshPtr mesh = end(world->getNextId("mesh"));
-		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
-		addElement(entity, NULL, ET_PATH_DBG);
 
 		begin("NavMeshStartDbg","NavMeshStartDbg");
 		NavMeshTriangle* tri = _path->firstTriangle();
@@ -108,9 +108,7 @@ public:
 		V(tri->getPosition(1, *_navMesh));
 		V(tri->getPosition(2, *_navMesh));
 		TRI(0,1,2);
-		mesh = end(world->getNextId("mesh"));
-		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
-		addElement(entity, NULL, ET_PATH_DBG);
+		end(world, "startDbgObject");
 
 		begin("NavMeshEndDbg","NavMeshEndDbg");
 		tri = _path->lastTriangle();
@@ -118,9 +116,7 @@ public:
 		V(tri->getPosition(1, *_navMesh));
 		V(tri->getPosition(2, *_navMesh));
 		TRI(0,1,2);
-		mesh = end(world->getNextId("mesh"));
-		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
-		addElement(entity, NULL, ET_PATH_DBG);
+		end(world,"endDbgObj");
 		
 		//return;
 		begin("NavMeshCornDbg", "NavMeshCornDbg", RenderOperation::OT_LINE_STRIP);
@@ -128,9 +124,7 @@ public:
 		Vector2 c = _path->nextCorner(s, _path->lastTriangle()->center, _navMesh);
 		V(s.x, 0, s.y);
 		V(c.x, 0, c.y);
-		mesh = end(world->getNextId("mesh"));
-		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
-		addElement(entity, NULL, ET_PATH_DBG);
+		end(world,"cornDbgObj");
 	}
 };
 
