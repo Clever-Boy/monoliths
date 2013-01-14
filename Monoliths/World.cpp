@@ -15,6 +15,8 @@ extern "C" {
 	void LOG(String msg)
 	{
 		LogManager::getSingleton().getDefaultLog()->logMessage(msg);
+		msg+="\n";
+		OutputDebugString(msg.c_str());
 	}
 }
 

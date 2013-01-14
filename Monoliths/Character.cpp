@@ -77,6 +77,7 @@ void Character::initImpl(World* world)
 	initCapsuleControllerMisc(desc, physMgr);
 	
 	_physController = physMgr->createCapsuleController(desc);
+	_physController->getActor()->userData = this;
 
 	PxExtendedVec3 pos = PxExtendedVec3(position.x, position.y+_capsuleOffsetY, position.z);
 	_physController->setPosition(pos);

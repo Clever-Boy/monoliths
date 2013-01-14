@@ -29,6 +29,16 @@ public:
 		currentNormal = n;
 	}
 
+	void V(const Ogre::Vector2& v)
+	{
+		V(v.x, v.y);
+	}
+
+	void V(float x, float z)
+	{
+		V(x, 0, z);
+	}
+
 	void V(float x, float y, float z)
 	{
 		V(x,y,z,0,0);

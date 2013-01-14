@@ -57,10 +57,10 @@ public:
 
 	PxRigidActor* pickNearestActor(const Ogre::Ray& ray, Ogre::Vector3& impact)
 	{
-		
 		PxVec3 origin = PxVec3(ray.getOrigin().x, ray.getOrigin().y, ray.getOrigin().z);
 		origin /= PHYSICS2WORLD_SCALE;
 		PxVec3 dir = PxVec3(ray.getDirection().x, ray.getDirection().y, ray.getDirection().z);
+		dir.normalizeFast();
 		const PxSceneQueryFlags outputFlags = PxSceneQueryFlag::eDISTANCE | PxSceneQueryFlag::eIMPACT;
 
 		PxRaycastHit hit;

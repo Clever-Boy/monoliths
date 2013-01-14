@@ -32,9 +32,12 @@ struct TriangleConnection
 {
 	NavMeshTriangle* tri0;
 	NavMeshTriangle* tri1;
+	int vIdxA;
+	int vIdxB;
+
 	float distance;
 
-	TriangleConnection(NavMeshTriangle* tri0);
+	TriangleConnection(NavMeshTriangle* tri0, int vIdxA, int vIdxB);
 
 	void setTri1(NavMeshTriangle* tri1);
 
@@ -42,6 +45,11 @@ struct TriangleConnection
 	{
 		return tri == tri0 ? tri1 : tri0;
 	}
+
+	static TriangleConnection* getConnectionBeetween(const NavMeshTriangle* tri1, const NavMeshTriangle* tri2);
+
+	const Ogre::Vector2& getPointA(const NavMesh* navMesh) const;
+	const Ogre::Vector2& getPointB(const NavMesh* navMesh) const;
 };
 
 struct NavMeshTriangle
