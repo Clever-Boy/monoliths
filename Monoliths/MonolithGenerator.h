@@ -41,8 +41,8 @@ public:
 		float scaleLambda, float slantLambda, float slantScaledown, float lowering,
 		float characterRadius = DEFAULT_CHARACTER_RADIUS, float characterHeight = MAX_CHARACTER_HEIGHT)
 		: 
-		  _engine(std::random_device()()),
-		  //_engine(42),
+		  //_engine(std::random_device()()),
+		  _engine(42),
 		  _sideDistribution(sideMean, sideSigma),
 		  _heightDistribution(heightMean, heightSigma),
 		  _scaleDistribution(scaleLambda),

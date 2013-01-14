@@ -45,9 +45,13 @@ class TrianglePath
 	
 	static void getLeftRight(Vector2& left, Vector2& right, Vector2& leftDir,Vector2& rightDir, const NavMesh* navMesh, const Vector2& from, const std::vector<TriangleConnection*>::iterator& i)
 	{
-		left = (*i)->getPointA(navMesh); right = (*i)->getPointA(navMesh);
+		left = (*i)->getPointA(navMesh); right = (*i)->getPointB(navMesh);
 		leftDir = left - from;
 		rightDir = right - from;
+		
+		leftDir.x = -leftDir.x; // mert az X tengely balra mutat ebben a beteg univerzumban
+		rightDir.x = -rightDir.x;
+
 		if (leftDir.crossProduct(rightDir) < 0)
 		{
 			std::swap(left, right);
@@ -91,7 +95,7 @@ public:
 			std::swap(left, right);
 			std::swap(leftDir, rightDir);
 		}
-
+		i++;
 		for (;i != _connections.end(); i++)
 		{
 			Vector2 left1, right1, leftDir1, rightDir1;

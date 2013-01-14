@@ -349,6 +349,20 @@ material NavMeshPathDbg
 	}
 }
 
+material NavMeshEdgeDbg
+{
+	technique main
+	{
+		pass main
+		{
+			polygon_mode wireframe
+			ambient 0 1 1 1
+			diffuse 0.0 1.0 1.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
 material NavMeshCornDbg
 {
 	technique main
