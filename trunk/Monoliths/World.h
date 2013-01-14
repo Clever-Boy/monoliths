@@ -6,6 +6,7 @@
 #include "PhysicsManager.h";
 //#include "Character.h"
 #include "NavMesh.h"
+#include "PathFinder.h"	
 
 using namespace Ogre;
 
@@ -29,6 +30,7 @@ private:
 	Character* _puppie;
 	float _mapSize;
 	NavMesh _navMesh;
+	PathFinder _pathFinder;
 
 	//typedef union
 	//{
@@ -60,7 +62,8 @@ public:
 		: _sceneManager(sceneManager),
 		_physicsManager(physicsManager),
 		_idCounter(0), 
-		_mapSize(mapSize)
+		_mapSize(mapSize),
+		_pathFinder(&_navMesh)
 	{
 		_physicsManager = physicsManager;
 		_shaderObjectIdCounter = 0;
@@ -70,6 +73,11 @@ public:
 	NavMesh& getNavMesh()
 	{
 		return _navMesh;
+	}
+
+	PathFinder* getPathFinder()
+	{
+		return &_pathFinder;
 	}
 
 	Character* getPuppie()
@@ -155,10 +163,6 @@ public:
 	
 	GameObject* pickNearest(const Ogre::Ray& ray, Ogre::Vector3& impact)
 	{
-		Ogre::Vector3 pos = ray.getOrigin();
-		Ogre::Vector3 dir = ray.getDirection();
-		
-		
 		PxActor* actor = _physicsManager->pickNearestActor(ray, impact);
 		if (actor != NULL)
 		{
@@ -168,5 +172,15 @@ public:
 		{
 			return NULL;
 		}
+	}
+
+	std::vector<GameObject*>::iterator gameObjectsBegin()
+	{
+		return _gameObjects.begin();
+	}
+
+	std::vector<GameObject*>::iterator gameObjectsEnd()
+	{
+		return _gameObjects.end();
 	}
 };

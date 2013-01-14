@@ -349,6 +349,47 @@ material NavMeshPathDbg
 	}
 }
 
+material NavMeshCornDbg
+{
+	technique main
+	{
+		pass main
+		{
+			polygon_mode wireframe
+			ambient 1 0 1 1
+			diffuse 1.0 0.0 1.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
+material NavMeshStartDbg
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0 0.5 1 0.5
+			diffuse 0.0 0.5 0.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
+material NavMeshEndDbg
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0.5 0.0 1 0.5
+			diffuse 0.5 0.0 0.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
+
 
 material Ground_basic
 {

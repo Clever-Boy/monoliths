@@ -9,7 +9,6 @@
 using namespace Ogre;
 using namespace OIS;
 
-
 class Game : public FrameListener
 {
 private:
@@ -93,7 +92,6 @@ public:
 	{
 		return _mouse;
 	}
-
 
 	void addController(GameController* controller)
 	{

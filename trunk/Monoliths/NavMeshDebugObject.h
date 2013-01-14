@@ -3,7 +3,9 @@
 #include "common.h"
 #include "GameObject.h"
 #include "NavMesh.h"
+#include "PathFinder.h"
 #include "MeshGenerator.h"
+
 
 class NavMeshDebugObject : public GameObject, private MeshGenerator
 {
@@ -63,12 +65,13 @@ public:
 
 class PathDebugObject :  public GameObject, private MeshGenerator
 {
-	std::vector<NavMeshTriangle*> _path;
+	TrianglePath* _path;
+	NavMesh* _navMesh;
 
 public:
 
-	PathDebugObject(const std::vector<NavMeshTriangle*> path)
-		: _path(path)
+	PathDebugObject(TrianglePath* path, NavMesh* navMesh)
+		: _path(path), _navMesh(navMesh)
 	{
 	}
 
@@ -77,14 +80,56 @@ public:
 		begin("NavMeshPathDbg", "NavMeshPathDbg", RenderOperation::OT_LINE_STRIP);
 		N(Ogre::Vector3::UNIT_Y);
 
-		for (auto i = _path.begin(); i != _path.end(); i++)
+		const std::vector<TriangleConnection*> connections = _path->getConnections();
+
+		for (auto i = connections.begin(); i != connections.end(); i++)
+		{
+			const Ogre::Vector2& p = (*i)->tri0->center;
+			V(p.x, 0, p.y);
+		}
+		const Ogre::Vector2& p = connections.back()->tri1->center;
+		V(p.x, 0, p.y);
+
+		/*
+		for (auto i = _path->getTriangles().begin(); i != _path->getTriangles().end(); i++)
 		{
 			Ogre::Vector2 p = (*i)->center;
 			V(p.x, 0, p.y);
 		}
-
+		*/
+		
 		Ogre::MeshPtr mesh = end(world->getNextId("mesh"));
 		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
+		addElement(entity, NULL, ET_PATH_DBG);
+
+		begin("NavMeshStartDbg","NavMeshStartDbg");
+		NavMeshTriangle* tri = _path->firstTriangle();
+		V(tri->getPosition(0, *_navMesh));
+		V(tri->getPosition(1, *_navMesh));
+		V(tri->getPosition(2, *_navMesh));
+		TRI(0,1,2);
+		mesh = end(world->getNextId("mesh"));
+		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
+		addElement(entity, NULL, ET_PATH_DBG);
+
+		begin("NavMeshEndDbg","NavMeshEndDbg");
+		tri = _path->lastTriangle();
+		V(tri->getPosition(0, *_navMesh));
+		V(tri->getPosition(1, *_navMesh));
+		V(tri->getPosition(2, *_navMesh));
+		TRI(0,1,2);
+		mesh = end(world->getNextId("mesh"));
+		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
+		addElement(entity, NULL, ET_PATH_DBG);
+		
+		//return;
+		begin("NavMeshCornDbg", "NavMeshCornDbg", RenderOperation::OT_LINE_STRIP);
+		Vector2 s = _path->firstTriangle()->center;
+		Vector2 c = _path->nextCorner(s, _path->lastTriangle()->center, _navMesh);
+		V(s.x, 0, s.y);
+		V(c.x, 0, c.y);
+		mesh = end(world->getNextId("mesh"));
+		entity = world->getSceneManager()->createEntity(world->getNextId("pathDbgObject"), mesh);
 		addElement(entity, NULL, ET_PATH_DBG);
 	}
 };

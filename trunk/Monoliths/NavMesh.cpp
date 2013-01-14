@@ -8,8 +8,8 @@ const float NAVMESH_POLY_SCALE = 16;
 typedef boost::shared_ptr<Point> PointPtr;
 typedef std::vector<Point*> PointVector;
 
-TriangleConnection::TriangleConnection(NavMeshTriangle* tri0)
-	: tri0(tri0), tri1(NULL)
+TriangleConnection::TriangleConnection(NavMeshTriangle* tri0, int vIdxA, int vIdxB)
+	: tri0(tri0), tri1(NULL), vIdxA(vIdxA), vIdxB(vIdxB)
 {
 }
 
@@ -19,6 +19,29 @@ void TriangleConnection::setTri1(NavMeshTriangle* tri)
 	tri0->addConnection(this);
 	tri1->addConnection(this);
 	distance = tri0->center.distance(tri1->center);
+}
+
+const Ogre::Vector2& TriangleConnection::getPointA(const NavMesh* navMesh) const
+{
+	return navMesh->getVertices()[vIdxA];
+}
+
+const Ogre::Vector2& TriangleConnection::getPointB(const NavMesh* navMesh) const
+{
+	return navMesh->getVertices()[vIdxB];
+}
+
+TriangleConnection* TriangleConnection::getConnectionBeetween(const NavMeshTriangle* tri1, const NavMeshTriangle* tri2)
+{
+	for (auto i = tri1->connections.begin(); i != tri1->connections.end(); i++)
+	{
+		for (auto j = tri2->connections.begin(); j != tri2->connections.end(); j++)
+		{
+			if (*i == *j) return *i;
+		}
+	}
+	
+	throw std::exception("TriangleConnection::getConnectionBeetween(): connection not found between the given triangles");
 }
 
 NavMeshTriangle::NavMeshTriangle(const NavMesh& navMesh, int i0, int i1, int i2)
@@ -177,7 +200,7 @@ public:
 		TMap::iterator bitch = _map.find(data);
 		if (bitch == _map.end())
 		{
-			TriangleConnection* conn = new TriangleConnection(triangle);
+			TriangleConnection* conn = new TriangleConnection(triangle, i0, i1);
 			_connections.push_back(conn);
 			_map[data] = conn;
 		}

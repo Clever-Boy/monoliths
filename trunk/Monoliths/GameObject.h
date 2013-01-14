@@ -31,10 +31,13 @@ private:
 	SceneManager* _sceneManager;
 	SceneNode* _node;
 	
+	bool _dbgMarked;
+	std::unordered_map<GameObjectElement*, String> _dbgElementMaterials;
+
 protected:
 	std::vector<GameObjectElement> _elements;
 
-	GameObject()
+	GameObject() : _dbgMarked(false)
 	{
 	}
 
@@ -68,6 +71,12 @@ protected:
 		element.type = type;
 
 		_elements.push_back(element);
+
+		if (entity != NULL)
+		{
+			GameObjectElement& ellie = _elements.back();
+			_dbgElementMaterials[&ellie] = entity->getSubEntity(0)->getMaterialName();
+		}
 	}
 
 	virtual void postInit() { }
@@ -94,14 +103,20 @@ public:
 
 	virtual void collectNavmeshElements(NavMesh* navMesh) { }
 
-	void dbgMark()
+
+
+	void setDebugMarked(bool marked)
 	{
+		_dbgMarked = marked;
+
 		for (auto i = _elements.begin(); i != _elements.end(); i++)
 		{
+			String materialName = _dbgMarked ? "Marked" : _dbgElementMaterials[&(*i)];
 			Entity* entity = (*i).entity;
+
 			if (entity != NULL)
 			{
-				entity->setMaterialName("Marked");
+				entity->setMaterialName(materialName);
 			}
 		}
 	}
