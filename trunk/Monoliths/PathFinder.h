@@ -45,6 +45,7 @@ class TrianglePath
 	
 	static void getLeftRight(Vector2& left, Vector2& right, Vector2& leftDir,Vector2& rightDir, const NavMesh* navMesh, const Vector2& from, const std::vector<TriangleConnection*>::iterator& i)
 	{
+		//(*i)->tri0
 		left = (*i)->getPointA(navMesh); right = (*i)->getPointB(navMesh);
 		leftDir = left - from;
 		rightDir = right - from;
@@ -52,7 +53,7 @@ class TrianglePath
 		leftDir.x = -leftDir.x; // mert az X tengely balra mutat ebben a beteg univerzumban
 		rightDir.x = -rightDir.x;
 
-		if (leftDir.crossProduct(rightDir) < 0)
+		if (leftDir.crossProduct(rightDir) > 0)
 		{
 			std::swap(left, right);
 			std::swap(leftDir, rightDir);
@@ -85,36 +86,43 @@ public:
 
 	NavMeshTriangle* lastTriangle() { return _last; }
 
+	static float cross(const Vector2& a, const Vector2& b)
+	{
+		float uf = a.x * b.y;
+		float puf = a.y * b.x;
+		float hej = uf - puf;
+		return hej;
+	}
+
 	Vector2 nextCorner(const Vector2& from, const Vector2& dest, const NavMesh* navMesh)
 	{
 		auto i = _connections.begin();
 		Vector2 left, right, leftDir, rightDir;
 		getLeftRight(left,right,leftDir,rightDir,navMesh,from, i);
-		if (leftDir.crossProduct(rightDir) < 0)
-		{
-			std::swap(left, right);
-			std::swap(leftDir, rightDir);
-		}
+		
 		i++;
 		for (;i != _connections.end(); i++)
 		{
 			Vector2 left1, right1, leftDir1, rightDir1;
 			getLeftRight(left1,right1,leftDir1,rightDir1,navMesh,from, i);
-			if (leftDir1.crossProduct(leftDir) > 0)
+			float c = cross(leftDir1, leftDir);
+			if (c > 0)
 			{
 				left = left1;
 				leftDir = leftDir1;
 			}
-
-			if (rightDir1.crossProduct(rightDir) < 0)
+			c = cross(rightDir1, rightDir);
+			if (c < 0)
 			{
 				right = right1;
 				rightDir = rightDir1;
 			}
 		}
 
-		float l = left.distance(from) + left.distance(dest);
-		float r = right.distance(from) + right.distance(dest);
+		//float l = left.distance(from) + left.distance(dest);
+		//float r = right.distance(from) + right.distance(dest);
+		float l = left.distance(dest);
+		float r = right.distance(dest);
 
 		return l < r ? left : right;
 	}
