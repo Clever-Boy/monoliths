@@ -97,7 +97,7 @@ public:
 		}
 		else if (evt.key == KC_U)
 		{
-			doShowPath(1, 4);
+			doShowPath(2, 6);
 		}
 		else if (evt.key >= KC_1 && evt.key <= KC_0)
 		{
