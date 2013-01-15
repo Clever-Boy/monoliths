@@ -293,117 +293,6 @@ material Monolith_basic
 	}
 }
 
-material NavMeshDbg
-{
-	technique main
-	{
-		pass main
-		{
-			polygon_mode wireframe
-			ambient 0.05 0.00 0.00 1
-			diffuse 2.0 0.0 0.0 1.0
-			specular 1 1 1 15
-		}
-	}
-}
-
-material NavMeshConnectionDbg
-{
-	technique main
-	{
-		pass main
-		{
-			polygon_mode wireframe
-			ambient 0.00 0.00 0.05 1
-			diffuse 0.0 0.0 1.0 1.0
-			specular 1 1 1 15
-		}
-	}
-}
-
-material Marked
-{
-	technique main
-	{
-		pass main
-		{
-			ambient 0.05 0.00 0.00 1
-			diffuse 2.0 0.0 0.0 1.0
-			specular 1 1 1 15
-		}
-	}
-}
-
-
-material NavMeshPathDbg
-{
-	technique main
-	{
-		pass main
-		{
-			polygon_mode wireframe
-			ambient 0 1 0 1
-			diffuse 0.0 1.0 0.0 1.0
-			specular 0 1 0 15
-		}
-	}
-}
-
-material NavMeshEdgeDbg
-{
-	technique main
-	{
-		pass main
-		{
-			polygon_mode wireframe
-			ambient 0 1 1 1
-			diffuse 0.0 1.0 1.0 1.0
-			specular 0 1 0 15
-		}
-	}
-}
-
-material NavMeshCornDbg
-{
-	technique main
-	{
-		pass main
-		{
-			polygon_mode wireframe
-			ambient 1 0 1 1
-			diffuse 1.0 0.0 1.0 1.0
-			specular 0 1 0 15
-		}
-	}
-}
-
-material NavMeshStartDbg
-{
-	technique main
-	{
-		pass main
-		{
-			ambient 0 0.5 1 0.5
-			diffuse 0.0 0.5 0.0 1.0
-			specular 0 1 0 15
-		}
-	}
-}
-
-material NavMeshEndDbg
-{
-	technique main
-	{
-		pass main
-		{
-			ambient 0.5 0.0 1 0.5
-			diffuse 0.5 0.0 0.0 1.0
-			specular 0 1 0 15
-		}
-	}
-}
-
-
 
 material Ground_basic
 {
@@ -440,6 +329,7 @@ material Robot_basic
 		}
 	}
 }
+
 
 material RefNinnya
 {
@@ -511,3 +401,102 @@ material Panel
 		}
 	}
 }
+
+// debug materials:
+
+material Red
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0.05 0.00 0.00 1
+			diffuse 2.0 0.0 0.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
+material Marked : Red
+{
+}
+
+material RedWf
+{
+	technique main
+	{
+		pass main
+		{
+			polygon_mode wireframe
+			ambient 0.05 0.00 0.00 1
+			diffuse 2.0 0.0 0.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
+material Green
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0 1 0 1
+			diffuse 0.0 1.0 0.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
+material Cyan
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0 1 1 1
+			diffuse 0.0 1.0 1.0 1.0
+			specular 0 1 1 15
+		}
+	}
+}
+
+material Blue
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0 0 1 1
+			diffuse 0.0 0.0 1.0 1.0
+			specular 0 0 1 15
+		}
+	}
+}
+
+material Purple
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 1 0 1 1
+			diffuse 1.0 0.0 1.0 1.0
+			specular 0 1 0 15
+		}
+	}
+}
+
+material Yellow
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 1 1.0 0 1.0
+			diffuse 1.0 1.0 0.0 1.0
+			specular 1 1 0 15
+		}
+	}
+}
+

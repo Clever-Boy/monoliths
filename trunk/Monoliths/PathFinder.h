@@ -36,96 +36,76 @@ public:
 	}
 };
 
+struct PathEdge
+{
+	NavMeshTriangle* from;
+	NavMeshTriangle* to;
+	int leftVertex;
+	int rightVertex;
+
+	PathEdge(NavMeshTriangle* from, NavMeshTriangle* to, int leftVertex, int rightVertex)
+		: from(from), to(to), leftVertex(leftVertex), rightVertex(rightVertex)
+	{
+	}
+
+	const Ogre::Vector2& getLeftPoint(const NavMesh* navMesh) const
+	{
+		return navMesh->getVertex(leftVertex);
+	}
+
+	const Ogre::Vector2& getRightPoint(const NavMesh* navMesh) const
+	{
+		return navMesh->getVertex(rightVertex);
+	}
+
+	static PathEdge create(NavMeshTriangle* from, NavMeshTriangle* to, NavMesh* navMesh)
+	{
+		TriangleConnection* conn = TriangleConnection::getConnectionBeetween(from, to);
+		int left = conn->vIdxA;
+		int right = conn->vIdxB;
+		if (left == from->idx0 && right == from->idx1 ||
+			left == from->idx1 && right == from->idx2 ||
+			left == from->idx2 && right == from->idx0)
+		{
+			std::swap(left, right);
+		}
+
+		return PathEdge(from, to, left, right);
+	}
+
+	
+};
+
 class TrianglePath
 {
 	NavMeshTriangle* _first;
 	NavMeshTriangle* _last;
-	std::vector<TriangleConnection*> _connections;
+	std::vector<PathEdge> _edges;
 	std::vector<NavMeshTriangle*> _triangles;
 	
-	static void getLeftRight(Vector2& left, Vector2& right, Vector2& leftDir,Vector2& rightDir, const NavMesh* navMesh, const Vector2& from, const std::vector<TriangleConnection*>::iterator& i)
-	{
-		//(*i)->tri0
-		left = (*i)->getPointA(navMesh); right = (*i)->getPointB(navMesh);
-		leftDir = left - from;
-		rightDir = right - from;
-		
-		leftDir.x = -leftDir.x; // mert az X tengely balra mutat ebben a beteg univerzumban
-		rightDir.x = -rightDir.x;
-
-		if (leftDir.crossProduct(rightDir) > 0)
-		{
-			std::swap(left, right);
-			std::swap(leftDir, rightDir);
-		}
-	}
-
-
 public:
-	TrianglePath(const std::vector<NavMeshTriangle*>& triangles)
+	TrianglePath(const std::vector<NavMeshTriangle*>& triangles, NavMesh* navMesh)
 		: _triangles(triangles), _first(triangles[0]), _last(triangles.back())
 	{
 		for (int i=0;i<triangles.size()-1;i++)
 		{
-			TriangleConnection* connection = TriangleConnection::getConnectionBeetween(triangles[i], triangles[i+1]);
-			_connections.push_back(connection);
+			PathEdge edge = PathEdge::create(triangles[i], triangles[i+1], navMesh);
+			_edges.push_back(edge);
 		}
 	}
 
-	const std::vector<TriangleConnection*>& getConnections()
+	const std::vector<PathEdge>& getEdges() const
 	{
-		return _connections;
+		return _edges;
 	}
 
-	const std::vector<NavMeshTriangle*>& getTriangles()
+	const std::vector<NavMeshTriangle*>& getTriangles() const
 	{
 		return _triangles;
 	}
 
 	NavMeshTriangle* firstTriangle() { return _first; }
-
 	NavMeshTriangle* lastTriangle() { return _last; }
-
-	static float cross(const Vector2& a, const Vector2& b)
-	{
-		float uf = a.x * b.y;
-		float puf = a.y * b.x;
-		float hej = uf - puf;
-		return hej;
-	}
-
-	Vector2 nextCorner(const Vector2& from, const Vector2& dest, const NavMesh* navMesh)
-	{
-		auto i = _connections.begin();
-		Vector2 left, right, leftDir, rightDir;
-		getLeftRight(left,right,leftDir,rightDir,navMesh,from, i);
-		
-		i++;
-		for (;i != _connections.end(); i++)
-		{
-			Vector2 left1, right1, leftDir1, rightDir1;
-			getLeftRight(left1,right1,leftDir1,rightDir1,navMesh,from, i);
-			float c = cross(leftDir1, leftDir);
-			if (c > 0)
-			{
-				left = left1;
-				leftDir = leftDir1;
-			}
-			c = cross(rightDir1, rightDir);
-			if (c < 0)
-			{
-				right = right1;
-				rightDir = rightDir1;
-			}
-		}
-
-		//float l = left.distance(from) + left.distance(dest);
-		//float r = right.distance(from) + right.distance(dest);
-		float l = left.distance(dest);
-		float r = right.distance(dest);
-
-		return l < r ? left : right;
-	}
 };
 
 class PathFinder
@@ -153,7 +133,7 @@ public:
 		else
 		{
 			std::vector<NavMeshTriangle*> triangles = _navMesh->findPathBetween(tri1, tri2);
-			result = new TrianglePath(triangles);
+			result = new TrianglePath(triangles, _navMesh);
 			_map[pair] = result;
 		}
 		return result;
