@@ -16,6 +16,7 @@ struct GameObjectElement
 	PxRigidActor* actor;
 	SceneNode* node;
 	ElementType type;
+	float scale;
 
 	void init(SceneNode* node, World* world);
 
@@ -55,13 +56,13 @@ protected:
 
 protected:
 
-	void addElement(Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD)
+	void addElement(Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD, float scale = 1)
 	{
-		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, actor, type);
+		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, actor, type, scale);
 	}
 
 	void addElement(const Ogre::Vector3& position, const Ogre::Quaternion& orientation,
-		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD)
+		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD, float scale = 1)
 	{
 		GameObjectElement element;
 		element.position = position;
@@ -69,6 +70,7 @@ protected:
 		element.entity = entity;
 		element.actor = actor;
 		element.type = type;
+		element.scale = scale;
 
 		_elements.push_back(element);
 

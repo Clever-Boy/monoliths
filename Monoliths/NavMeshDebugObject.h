@@ -6,8 +6,26 @@
 #include "PathFinder.h"
 #include "MeshGenerator.h"
 
+template <ElementType ELEMENT_TYPE = ET_MONOLITH_DBG>
+class DebugObject : public GameObject, protected MeshGenerator
+{
+protected:
+	void endMesh(World* world, const String& name)
+	{
+		Ogre::MeshPtr mesh = MeshGenerator::end(world->getNextId("mesh"));
+		Entity* entity = world->getSceneManager()->createEntity(world->getNextId(name), mesh);
+		addElement(entity, NULL, ELEMENT_TYPE);
+	}
 
-class NavMeshDebugObject : public GameObject, private MeshGenerator
+	void putBox(float x, float y, float z, const String& materialName, World* world, float scale = 10)
+	{
+		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("doboz_"),"doboz.mesh");
+		entity->setMaterialName(materialName);
+		addElement(Ogre::Vector3(x,y,z), Ogre::Quaternion::IDENTITY, entity, NULL, ELEMENT_TYPE, scale);
+	}
+};
+
+class NavMeshDebugObject : public DebugObject<>
 {
 	NavMesh* _navMesh;
 
@@ -21,49 +39,36 @@ public:
 	{
 		const std::vector<Ogre::Vector2>& vertices = _navMesh->getVertices();
 		const std::vector<NavMeshTriangle>& triangles = _navMesh->getTriangles();
+		const std::vector<TriangleConnection*>& connections = _navMesh->getTriangleConnections();
 
-		begin("NavMeshDbg", "NavMeshDbg");
+		begin("NavMeshDbg", "RedWf");
 		N(Ogre::Vector3::UNIT_Y);
 		for (auto i = vertices.begin(); i != vertices.end(); i++)
 		{
 			V(i->x, 0, i->y);
 		}
-
 		for (auto i = triangles.begin(); i != triangles.end(); i++)
 		{
 			TRI(i->idx0, i->idx1, i->idx2);
 		}
-
-		Ogre::MeshPtr mesh = end(world->getNextId("mesh"));
-		Entity* entity = world->getSceneManager()->createEntity("NavMeshDbgEntity", mesh);
-		addElement(Ogre::Vector3::ZERO, Ogre::Quaternion::IDENTITY, entity, NULL, ET_MONOLITH_DBG);
-
-		const std::vector<TriangleConnection*>& connections = _navMesh->getTriangleConnections();
+		endMesh(world, "NavMeshDbgEntity");
 
 		
-		begin("NavMeshConnectionDbg", "NavMeshConnectionDbg", RenderOperation::OT_LINE_LIST);
-
+		begin("NavMeshConnectionDbg", "Blue", RenderOperation::OT_LINE_LIST);
 		for (auto i = connections.begin(); i != connections.end(); i++)
 		{
-			
 			Ogre::Vector2 p0 = (*i)->tri0->center;
 			Ogre::Vector2 p1 = (*i)->tri1->center;
 			V(p0.x, 0, p0.y);
 			V(p1.x, 0, p1.y);
 		}
-
-		Ogre::MeshPtr connMesh = end(world->getNextId("mesh"));
-		Entity* connEntity = world->getSceneManager()->createEntity("NavMeshConnDbgEntity", connMesh);
-		addElement(connEntity, NULL, ET_MONOLITH_DBG);
-		//
-		
-		//end(world->ge
+		endMesh(world, "NavMeshConnDbgEntity");
 	}
 
 };
 
 
-class PathDebugObject :  public GameObject, private MeshGenerator
+class PathDebugObject :  public DebugObject<ET_PATH_DBG>
 {
 	TrianglePath* _path;
 	NavMesh* _navMesh;
@@ -75,60 +80,50 @@ public:
 	{
 	}
 
-	void end(World* world, const String& name)
-	{
-		Ogre::MeshPtr mesh = MeshGenerator::end(world->getNextId("mesh"));
-		Entity* entity = world->getSceneManager()->createEntity(world->getNextId(name), mesh);
-		addElement(entity, NULL, ET_PATH_DBG);
-	}
 
 	virtual void initImpl(World* world)
 	{
-		begin("NavMeshPathDbg", "NavMeshPathDbg", RenderOperation::OT_LINE_STRIP);
+		begin("NavMeshPathDbg", "Green", RenderOperation::OT_LINE_STRIP);
 		N(Ogre::Vector3::UNIT_Y);
-		const std::vector<TriangleConnection*> connections = _path->getConnections();
 		for (auto i = _path->getTriangles().begin(); i != _path->getTriangles().end(); i++)
 		{
 			V((*i)->center);
 		}
-		end(world, "pathDbgObj");
+		endMesh(world, "pathDbgObj");
 
-		begin("NavMeshEdgeDbg","NavMeshEdgeDbg", RenderOperation::OT_LINE_STRIP);
-		for (auto i = connections.begin(); i != connections.end(); i++)
+		begin("NavMeshPathEdgesDbg", "Cyan", RenderOperation::OT_LINE_LIST);
+		for (auto i = _path->getEdges().begin(); i != _path->getEdges().end(); i++)
 		{
-			V((*i)->getPointA(_navMesh));
-			V((*i)->getPointB(_navMesh));
+			const Ogre::Vector2& l = i->getLeftPoint(_navMesh);
+			const Ogre::Vector2& r = i->getRightPoint(_navMesh);
+			V(l); V(r);
+			putBox(l.x, 0, l.y, "Red", world);
+			putBox(r.x, 0, r.y, "Green", world);
 		}
-		end(world, "navmeshEdge");
-		
+		endMesh(world, "gnegklegvklne");
 
-		begin("NavMeshStartDbg","NavMeshStartDbg");
+		begin("NavMeshStartDbg","Purple");
 		NavMeshTriangle* tri = _path->firstTriangle();
 		V(tri->getPosition(0, *_navMesh));
 		V(tri->getPosition(1, *_navMesh));
 		V(tri->getPosition(2, *_navMesh));
 		TRI(0,1,2);
-		end(world, "startDbgObject");
+		endMesh(world, "asdasdsa");
 
-		begin("NavMeshEndDbg","NavMeshEndDbg");
+		begin("NavMeshEndDbg","Yellow");
 		tri = _path->lastTriangle();
 		V(tri->getPosition(0, *_navMesh));
 		V(tri->getPosition(1, *_navMesh));
 		V(tri->getPosition(2, *_navMesh));
 		TRI(0,1,2);
-		end(world,"endDbgObj");
-		
-		//return;
-		begin("NavMeshCornDbg", "NavMeshCornDbg", RenderOperation::OT_LINE_STRIP);
-		Vector2 s = _path->firstTriangle()->center;
-		Vector2 c = _path->nextCorner(s, _path->lastTriangle()->center, _navMesh);
-		V(s.x, 0, s.y);
-		V(c.x, 0, c.y);
-		end(world,"cornDbgObj");
+		endMesh(world,"fefwefewf");
+				
+		//begin("NavMeshCornDbg", "NavMeshCornDbg", RenderOperation::OT_LINE_STRIP);
+		//end(world,"cornDbgObj");
 	}
 };
 
-class TriangleDebugObject : public GameObject, private MeshGenerator
+class TriangleDebugObject : public DebugObject<ET_STANDARD>
 {
 	NavMeshTriangle* _triangle;
 	NavMesh* _navMesh;
@@ -142,7 +137,7 @@ public:
 
 	virtual void initImpl(World* world)
 	{
-		begin("Tri", "Marked");
+		begin("Tri", "Red");
 		N(Ogre::Vector3::UNIT_Y);
 		const Ogre::Vector2& v0 = _triangle->getPosition(0, *_navMesh);
 		const Ogre::Vector2& v1 = _triangle->getPosition(1, *_navMesh);
@@ -154,8 +149,6 @@ public:
 
 		TRI(0,1,2);
 
-		Ogre::MeshPtr mesh = end(world->getNextId("mesh"));
-		Entity* entity = world->getSceneManager()->createEntity(world->getNextId("dbgTri"), mesh);
-		addElement(entity, NULL, ET_MONOLITH_DBG);
+		endMesh(world, "dbgTri");
 	}
 };

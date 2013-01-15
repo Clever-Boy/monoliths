@@ -53,7 +53,7 @@ void GameObject::init(World* world)
 		for (auto i = _elements.begin(); i != _elements.end(); i++)
 		{
 			SceneNode* child = _node->createChildSceneNode(world->getNextId("object_"));
-			child->setScale(scale);
+			child->setScale(scale * i->scale);
 			(*i).init(child, world);
 
 			if ((*i).actor != NULL)
