@@ -72,11 +72,17 @@ class PathDebugObject :  public DebugObject<ET_PATH_DBG>
 {
 	TrianglePath* _path;
 	NavMesh* _navMesh;
+	Ogre::Vector2 _from;
+	Ogre::Vector2 _to;
+	Ogre::Vector2 _nextCorner;
 
 public:
 
-	PathDebugObject(TrianglePath* path, NavMesh* navMesh)
-		: _path(path), _navMesh(navMesh)
+	PathDebugObject(TrianglePath* path, const Ogre::Vector2& from, const Ogre::Vector2& to, const Ogre::Vector2& nextCorner)
+		: _path(path), _navMesh(path->getNavMesh()),
+		_from(from),
+		_to(to),
+		_nextCorner(nextCorner)
 	{
 	}
 
@@ -91,16 +97,38 @@ public:
 		}
 		endMesh(world, "pathDbgObj");
 
-		begin("NavMeshPathEdgesDbg", "Cyan", RenderOperation::OT_LINE_LIST);
-		for (auto i = _path->getEdges().begin(); i != _path->getEdges().end(); i++)
+		if (_path->getEdges().size() > 0)
 		{
-			const Ogre::Vector2& l = i->getLeftPoint(_navMesh);
-			const Ogre::Vector2& r = i->getRightPoint(_navMesh);
-			V(l); V(r);
-			putBox(l.x, 0, l.y, "Red", world);
-			putBox(r.x, 0, r.y, "Green", world);
+			begin("NavMeshPathEdgesDbg", "Cyan", RenderOperation::OT_LINE_LIST);
+			for (auto i = _path->getEdges().begin(); i != _path->getEdges().end(); i++)
+			{
+				const Ogre::Vector2& l = i->getLeftPoint(_navMesh);
+				const Ogre::Vector2& r = i->getRightPoint(_navMesh);
+				V(l); V(r);
+				putBox(l.x, 0, l.y, "Red", world);
+				putBox(r.x, 0, r.y, "Green", world);
+			
+				Vector2 dir, pos;
+				if (i->mutualPoint == PathEdge::MP_LEFT)
+				{
+					dir = r-l;
+					pos = l;
+				}
+				else if (i->mutualPoint == PathEdge::MP_RIGHT)
+				{
+					dir = l-r;
+					pos = r;
+				}
+
+				if (i != _path->getEdges().begin())
+				{
+					dir.normalise();
+					pos+= dir*20;
+					putBox(pos.x, 0, pos.y, "Black", world);
+				}
+			}
+			endMesh(world, "gnegklegvklne");
 		}
-		endMesh(world, "gnegklegvklne");
 
 		begin("NavMeshStartDbg","Purple");
 		NavMeshTriangle* tri = _path->firstTriangle();
@@ -117,7 +145,13 @@ public:
 		V(tri->getPosition(2, *_navMesh));
 		TRI(0,1,2);
 		endMesh(world,"fefwefewf");
-				
+
+		begin("navmeshNextCornerEdge", "Black", RenderOperation::OT_LINE_LIST);
+		//Ogre::Vector2 corn = _path->nextCorner(_from, _to);
+		V(_from);
+		V(_nextCorner);
+		endMesh(world,"meghalsz");
+
 		//begin("NavMeshCornDbg", "NavMeshCornDbg", RenderOperation::OT_LINE_STRIP);
 		//end(world,"cornDbgObj");
 	}

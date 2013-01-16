@@ -87,13 +87,6 @@ abstract material PhongToonshadeOnlySpecular
 
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_PhongToonshadeSpecular { }
-
-			texture_unit shadowmap
-			{
-				content_type shadow
-				tex_address_mode clamp
-				filtering bilinear
-			} 
 		}
 	}
 
@@ -139,13 +132,6 @@ abstract material PhongTextured
 
 			vertex_program_ref VS_Phong { }
 			fragment_program_ref PS_PhongToonshadeTextured { }
-
-			texture_unit shadowmap
-			{
-				content_type shadow
-				tex_address_mode clamp
-				filtering bilinear
-			} 
 
 			texture_unit
 			{
@@ -403,6 +389,20 @@ material Panel
 }
 
 // debug materials:
+
+material Black
+{
+	technique main
+	{
+		pass main
+		{
+			ambient 0.00 0.00 0.00 1
+			diffuse 0.0 0.0 0.0 1.0
+			specular 1 1 1 15
+		}
+	}
+}
+
 
 material Red
 {

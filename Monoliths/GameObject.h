@@ -64,6 +64,9 @@ protected:
 	void addElement(const Ogre::Vector3& position, const Ogre::Quaternion& orientation,
 		Ogre::Entity* entity = NULL, PxRigidActor* actor = NULL, ElementType type = ET_STANDARD, float scale = 1)
 	{
+#ifndef _DEBUG
+		if (type != ET_STANDARD) return;
+#endif
 		GameObjectElement element;
 		element.position = position;
 		element.orientation = orientation;
@@ -94,6 +97,9 @@ public:
 	{
 		for (auto i = _elements.begin(); i != _elements.end(); i++)
 		{
+#ifndef _DEBUG
+			if (i->type != ET_STANDARD) continue;
+#endif
 			i->node->setVisible((i->type & type) != 0);
 		}
 	}

@@ -47,11 +47,17 @@ void GameObject::init(World* world)
 	Ogre::Vector3 scale = Ogre::Vector3(s,s,s);
 	if (_elements.size() > 0)
 	{
+
+
 		_node = _sceneManager->getRootSceneNode()->createChildSceneNode();
 		float objectId = world->getNexShaderObjectId();
 
 		for (auto i = _elements.begin(); i != _elements.end(); i++)
 		{
+			#ifndef _DEBUG
+			if (i->type != ET_STANDARD) continue;
+			#endif
+
 			SceneNode* child = _node->createChildSceneNode(world->getNextId("object_"));
 			child->setScale(scale * i->scale);
 			(*i).init(child, world);

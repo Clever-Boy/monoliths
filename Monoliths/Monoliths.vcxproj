@@ -112,11 +112,13 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="GameController.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="MeshGenerator.h" />
+    <ClInclude Include="MoveToPointStrategy.h" />
     <ClInclude Include="NavMesh.h" />
     <ClInclude Include="NavMeshDebugObject.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="Robot.h" />
+    <ClInclude Include="Strategy.h" />
     <ClInclude Include="TPSCharacterController.h" />
     <ClInclude Include="VisibilityControlRTListener.h" />
     <ClInclude Include="GameObject.h" />
@@ -159,6 +161,7 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
+    <ClCompile Include="Strategy.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

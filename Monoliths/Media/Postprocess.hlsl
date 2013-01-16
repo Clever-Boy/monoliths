@@ -130,7 +130,7 @@ float4 PS_Contour(float2 p : TEXCOORD0) : COLOR
 	G.a = 2*pow(G.a, 0.6);
 
 	//G.rgb /=pow(dh.x*0.0001, 0.3);
-	G.rgb*=100;
+	//G.rgb*=10;
 	float bw = G.r * 0.21f + G.g * 0.39f + G.b * 0.4f + G.a;
 
 	return saturate(bw);

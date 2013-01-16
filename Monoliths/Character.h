@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "PhysicsManager.h"
 #include "World.h"
+#include "Strategy.h"
+#include "NavMesh.h"
 
 using namespace Ogre;
 using namespace physx;
@@ -21,8 +23,25 @@ class Character : public GameObject
 	float _radius;
 	float _height;
 	float _capsuleOffsetY;
+	Strategy* _strategy;
+	NavMeshTriangle* _currentTriangle;
 
 public:
+
+	NavMeshTriangle* currentNavMeshTriangle() const
+	{
+		return _currentTriangle;
+	}
+
+	void setStrategy(Strategy* strategy)
+	{
+		_strategy = strategy;
+	}
+
+	const Strategy* getStrategy() const
+	{
+		return _strategy;
+	}
 
 	bool hasElement()
 	{
@@ -34,13 +53,27 @@ public:
 		return _elements[0];
 	}
 
+	
+	const Ogre::Vector3& getPosition() const
+	{
+		return _elements[0].position;
+	}
+
+	Ogre::Vector2 getPos2d() const
+	{
+		const Ogre::Vector3& pos = getPosition();
+		return Ogre::Vector2(pos.x, pos.z);
+	}
+
 	Character(float radius = DEFAULT_CHARACTER_RADIUS, float height = 200, Ogre::Quaternion meshOrientation = Ogre::Quaternion::ZERO) 
 		: _radius(radius),
 		  _height(height),
 		  _capsuleOffsetY(height*0.5f/PHYSICS2WORLD_SCALE + 0.01f),
 		  _currentAnimState(NULL), 
 		  _lookingAngle(0),
-		  _meshOrientation(meshOrientation)
+		  _meshOrientation(meshOrientation),
+		  _strategy(Strategy::NOTHING),
+		  _currentTriangle(NULL)
 	{
 	}
 
@@ -54,21 +87,32 @@ public:
 		_lookingAngle += Radian(angle);
 	}
 
-	float getLookingAngle()
+	void turn(const Ogre::Vector3& dir)
+	{
+		turn(Vector2(dir.x, dir.z));
+	}
+
+	void turn(const Ogre::Vector2& dir)
+	{
+		_lookingAngle = Ogre::Math::ATan2(-dir.y, dir.x);
+	}
+
+	float getLookingAngle() const
 	{
 		return _lookingAngle.valueRadians();
 	}
 
-	PxCapsuleController* getPhysController()
+	PxCapsuleController* getPhysController() const
 	{
 		return _physController;
 	}
 
-	Ogre::Vector3 getLookingDirection()
+	Ogre::Vector3 getLookingDirection() const
 	{
 		return Ogre::Vector3(Math::Cos(_lookingAngle), 0, -Math::Sin(_lookingAngle));
 		//return Ogre::Vector3(-Math::Sin(_lookingAngle), 0, -Math::Cos(_lookingAngle));
 	}
+
 
 	virtual Entity* createEntity(World* world) { return NULL; }
 	virtual Action* getInitialAction();

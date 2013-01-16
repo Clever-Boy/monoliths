@@ -37,8 +37,8 @@ void World::createLights()
 	light1->setDirection(1.2, -0.4, 0.8);
 	light1->setDiffuseColour(1, 1, 1);
 	light1->setSpecularColour(0.3, 0.3, 0.3);
-	light1->setCastShadows(true);
-	light1->setShadowFarDistance(1000);
+	light1->setCastShadows(false);
+	//light1->setShadowFarDistance(1000);
 
 	Light* light2 = _sceneManager->createLight("dirLight2");
 	light2->setType(Light::LT_DIRECTIONAL);
@@ -48,8 +48,8 @@ void World::createLights()
 	light2->setCastShadows(false);
 
 	
-	_sceneManager->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
-	_sceneManager->setShadowFarDistance(10000);
+	//_sceneManager->setShadowTechnique(SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
+	//_sceneManager->setShadowFarDistance(10000);
 }
 
 void World::showOnly(ElementType elementType)
@@ -68,7 +68,7 @@ void World::createGameObjects()
 	int n = (_mapSize*_mapSize)/(avgDistance*avgDistance);
 
 
-	MonolithGenerator gen(_mapSize, 200, 100, 1000, 300, 0.9, 1.5, 0.05, 150);
+	MonolithGenerator gen(_mapSize, 200, 100, 1000, 300, 0.9, 1.5, 0.07, 150);
 
 	for (int i = 0; i < n; i++)
 	{
