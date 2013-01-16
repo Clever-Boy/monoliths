@@ -1,10 +1,10 @@
 #pragma once
 #include "stdafx.h"
-#define BASIC_GRAPHICS
+//#define BASIC_GRAPHICS
 
 const float PHYSICS2WORLD_SCALE = 100;
 
-const float DEFAULT_CHARACTER_RADIUS = 30;
+const float DEFAULT_CHARACTER_RADIUS = 50;
 const float MAX_CHARACTER_HEIGHT = 200;
 
 enum ElementType

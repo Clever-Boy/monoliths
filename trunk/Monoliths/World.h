@@ -87,6 +87,7 @@ public:
 	
 	void addGameObject(GameObject* gameObject)
 	{
+
 		_gameObjects.push_back(gameObject); 
 		gameObject->init(this);
 	}
@@ -125,7 +126,9 @@ public:
 		createLights();
 		createGameObjects();
 		initNavMesh();
+#ifdef _DEBUG
 		initDebugObjects();
+#endif
 	}
 
 	String getNextId(String prefix = "object")

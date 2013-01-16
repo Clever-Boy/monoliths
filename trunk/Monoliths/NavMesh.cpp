@@ -337,6 +337,9 @@ void NavMesh::init(const Ogre::Vector2& mapSize)
 
 std::vector<NavMeshTriangle*> NavMesh::findPathBetween(const NavMeshTriangle* a, const NavMeshTriangle* b)
 {
+	assert(a != NULL);
+	assert(b != NULL);
+
 	GenericSearchGraphDescriptor<NavMeshTriangle*, float> graph;
 	graph.func_container = &_functionContainer;
 	graph.hashTableSize = 128;

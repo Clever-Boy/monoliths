@@ -87,6 +87,12 @@
     <ClInclude Include="PathFinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Strategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveToPointStrategy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -132,6 +138,9 @@
       <Filter>External Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NavMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Strategy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

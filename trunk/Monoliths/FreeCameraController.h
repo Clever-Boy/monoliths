@@ -7,6 +7,7 @@
 #include "NavMesh.h"
 #include "NavMeshDebugObject.h"
 #include <random>
+#include "MoveToPointStrategy.h"
 
 using namespace Ogre;
 using namespace OIS;
@@ -24,22 +25,17 @@ class FreeCameraController : public GameController
 
 	OgreBites::SdkCameraMan _cameraMan;
 	Camera* _camera;
-
 	float _lastBoxTime;
-	
 	State _state;
-
 	World* _world;
-
 	PathDebugObject* _kakkancs;
-
 	std::default_random_engine _rnd;
-
 	std::vector<Ray> _rajz;
+	MoveToPointStrategy* _strat;
 
 public:
 	FreeCameraController(Camera* camera, World* world)
-		: _cameraMan(camera), _lastBoxTime(0), _state(ST_NORMAL), _kakkancs(NULL),
+		: _cameraMan(camera), _lastBoxTime(0), _state(ST_NORMAL), _kakkancs(NULL), _strat(NULL),
 		_rnd(std::random_device()())
 	{
 		
@@ -64,7 +60,21 @@ public:
 			BoxObject* box = new BoxObject(_camera->getPosition(), _camera->getDirection().normalisedCopy()*30);
 			game->getWorld()->addGameObject(box);
 		}
-		
+
+#ifdef _DEBUG
+		if (_strat != NULL && _strat->isActive() && _strat->currentPath() != NULL)
+		{
+			if (_kakkancs != NULL)
+			{
+				_world->removeGameObject(_kakkancs);
+			}
+			
+			Ogre::Vector2 pos = _world->getPuppie()->getPos2d();
+			
+			_kakkancs = new PathDebugObject(_strat->currentPath(), pos, _strat->destination(), _strat->nextCorner());
+			_world->addGameObject(_kakkancs);
+		}
+#endif
 		if (_state == ST_NORMAL)
 		{
 			_world->showOnly(ET_STANDARD);
@@ -122,11 +132,12 @@ public:
 		{
 			_world->removeGameObject(_kakkancs);
 		}
-		_kakkancs = new PathDebugObject(path, &navMesh);
+		
+		_kakkancs = new PathDebugObject(path, tri1.center, tri2.center, path->nextCorner(tri1.center, tri2.center));
 		_world->addGameObject(_kakkancs);
 		_state == ST_PATH;
 	}
-
+	
 	virtual bool keyReleased(const KeyEvent &evt)
 	{
 		_cameraMan.injectKeyUp(evt);
@@ -146,8 +157,22 @@ public:
 		_cameraMan.injectMouseDown(evt, id);
 
 		Ogre::Ray ray = Ogre::Ray(_camera->getPosition(),  _camera->getDirection());
-		_rajz.push_back(ray);
-		doPickRay(ray);
+
+		if (id == OIS::MB_Right)
+		{	
+			_rajz.push_back(ray);
+			doPickRay(ray);
+		}
+		else if (id == OIS::MB_Left)
+		{
+			Ogre::Vector3 impact;
+			Character* pup = _world->getPuppie();
+			GameObject* obj = _world->pickNearest(ray, impact);
+			_strat = new MoveToPointStrategy(Vector2(impact.x, impact.z),&_world->getNavMesh());
+			_world->getPuppie()->setStrategy(_strat);
+			//Ogre::Vector3 dir = impact-pup->getPosition();
+			//_world->getPuppie()->turn(dir);
+		}
 		
 		return true;
 	}

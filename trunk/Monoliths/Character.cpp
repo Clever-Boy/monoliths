@@ -38,6 +38,9 @@ void Character::clearActions()
 
 void Character::act(World* world, float totalTime, float dt) 
 {
+	_currentTriangle = world->getNavMesh().findTriangleOfPoint(getPos2d());	
+	_strategy->control(this, world, totalTime, dt);
+
 	for (auto i = _actions.begin(); i != _actions.end(); i++)
 	{
 		(*i)->apply(this, world, totalTime, dt);

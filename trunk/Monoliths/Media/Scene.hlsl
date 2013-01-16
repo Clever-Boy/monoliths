@@ -153,9 +153,7 @@ void AddDiffuseSpecular(float3 lightDir,
 	specular+=lumS*specularLight;
 }
 
-
-uniform sampler2D shadowmap : register(s0);
-uniform sampler2D tex : register(s1);
+uniform sampler2D tex : register(s0);
 uniform float4 ambient;
 uniform float4 ambientLight;
 uniform float4 diffuse;
