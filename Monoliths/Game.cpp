@@ -188,7 +188,7 @@ void Game::notifyGameOver()
 void Game::setupWorld()
 {
 	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 40000, this); 
+	_world = new World(_sceneManager, _physicsManager, 60000, this); 
 	_world->init();
 
 	_enemyGenerator = new EnemyGenerator(_world);
