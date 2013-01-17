@@ -12,8 +12,8 @@ class FollowAndKillStrategy : public Strategy
 	Character* _victim;
 	World* _world;
 	NavMesh* _navMesh;
-	//TrianglePath* _currentPath;
-	//Ogre::Vector2 _nextCorner;
+	TrianglePath* _currentPath;
+	Ogre::Vector2 _nextCorner;
 	float _squaredShootingDistance;
 
 public:
@@ -56,15 +56,15 @@ public:
 		}
 		else
 		{
-			TrianglePath* currentPath = NULL;
+			_currentPath = NULL;
 			if (character->currentNavMeshTriangle() != NULL &&  _victim->currentNavMeshTriangle() != NULL)
 			{
-				currentPath = world->getPathFinder()->findPathBeetween(character->currentNavMeshTriangle(), _victim->currentNavMeshTriangle());
+				_currentPath = world->getPathFinder()->findPathBeetween(character->currentNavMeshTriangle(), _victim->currentNavMeshTriangle());
 			}
-			if (currentPath != NULL)
+			if (_currentPath != NULL)
 			{
-				Ogre::Vector2 nextCorner = currentPath->nextCorner(pos, dest);
-				Ogre::Vector2 dir = nextCorner-pos;
+				_nextCorner = _currentPath->nextCorner(pos, dest);
+				Ogre::Vector2 dir = _nextCorner-pos;
 				character->setDirection(dir);
 				character->setAction(Action::ROBOT_WALK);
 			}

@@ -28,6 +28,7 @@ class EnemyGenerator
 
 	int _counter;
 	float _minDistanceSquared;
+	float _maxDistanceSquared;
 public:
 
 	EnemyGenerator(World* world)
@@ -39,14 +40,15 @@ public:
 		_timer(0),
 		_counter(0),
 	    _nextSpawn(0),
-		_minDistanceSquared(15000*15000)
+		_minDistanceSquared(12000*12000),
+		_maxDistanceSquared(20000*20000)
 	{
 	}
 
-	float getNextSpawn(float t)
+	float getNextSpawnTime(float t)
 	{
-		if (t < 30) return 6;
-		return 20*std::exp(-t*0.001);
+		if (t < 30) return 5;
+		return 15*std::exp(-t*0.001);
 	}
 
 	void doWork(float t, float dt)
@@ -64,7 +66,7 @@ public:
 			while(_player->getPos2d().squaredDistance(pos) > _minDistanceSquared && _navMesh->findTriangleOfPoint(pos) == NULL);
 			_world->addEnemyRobot(pos);
 			_timer = 0;
-			_nextSpawn = getNextSpawn(t);
+			_nextSpawn = getNextSpawnTime(t);
 
 			LOG("SPAWN! "+StringConverter::toString(pos)+" next after "+StringConverter::toString(_nextSpawn)+" s");
 		}

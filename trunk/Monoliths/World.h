@@ -149,7 +149,7 @@ public:
 	float getNexShaderObjectId()
 	{
 		//_shaderObjectIdCounter.i++;
-		_shaderObjectIdCounter+=0.001;
+		_shaderObjectIdCounter+=0.002;
 		return _shaderObjectIdCounter;
 	}
 
