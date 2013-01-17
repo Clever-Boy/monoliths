@@ -52,18 +52,18 @@ public:
 		
 		_mouseHeight+=_mouseMove.y*dt*40;
 
-		_character->clearActions();
+		//_character->clearActions();
 		//String zzz = StringConverter::toString(_frameCounter++)+String("\n");
 		//OutputDebugString(zzz.c_str());
 		if (game->getKeyboard()->isKeyDown(KC_W))
 		{
 			//zzz = "NNNnnnnyy "+zzz;
 			//OutputDebugString(zzz.c_str());
-			_character->addAction(_walkAction);
+			_character->setAction(_walkAction);
 		}
 		else
 		{
-			_character->addAction(_idleAction);
+			_character->setAction(_idleAction);
 		}
 		setCameraFromCharacter();
 		_mouseMove = Ogre::Vector2::ZERO;

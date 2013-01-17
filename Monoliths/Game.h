@@ -5,14 +5,16 @@
 #include "World.h"
 #include "GameController.h"
 #include "PhysicsManager.h"
+#include "EnemyGenerator.h"
 
 using namespace Ogre;
 using namespace OIS;
 
-class Game : public FrameListener
+class Game : public FrameListener, public GameStateListener
 {
 private:
 	//SceneManager* _sceneManager;
+	EnemyGenerator* _enemyGenerator;
 	Ogre::Root* _root;
 	RenderWindow* _window;
 	SceneManager* _sceneManager;
@@ -27,6 +29,7 @@ private:
 	static const float STEP_TIME;
 	float _simulationAccumulator;
 	float _totalTime;
+	float _playerShotTimer;
 
 	Light* _dirLight0;
 
@@ -39,6 +42,8 @@ private:
 	
 	OverlayContainer* _guiPanel;
 	TextAreaOverlayElement* _fpsElement;
+	TextAreaOverlayElement* _hpElement;
+	TextAreaOverlayElement* _gameOverElement;
 
 	void setupRenderSystem();
 	void setupWorld();
@@ -57,18 +62,24 @@ public:
 	Game()
 		: _totalTime(0),
 		  _simulationAccumulator(0),
-		  _activeController(NULL)
+		  _activeController(NULL),
+		  _playerShotTimer(0)
 	{
 	}
 
 	~Game();
 
-	PhysicsManager* getPhysicsManager()
+	Viewport* getViewport() const
+	{
+		return _viewport;
+	}
+
+	PhysicsManager* getPhysicsManager() const
 	{
 		return _physicsManager;
 	}
 
-	World* getWorld()
+	World* getWorld() const
 	{
 		return _world;
 	}
@@ -78,17 +89,17 @@ public:
 		return _world->getNextId();
 	}
 
-	float getTotalTime()
+	float getTotalTime() const
 	{
 		return _totalTime;
 	}
 
-	OIS::Keyboard* getKeyboard()
+	OIS::Keyboard* getKeyboard() const
 	{
 		return _keyboard;
 	}
 
-	OIS::Mouse* getMouse()
+	OIS::Mouse* getMouse() const
 	{
 		return _mouse;
 	}
@@ -112,5 +123,12 @@ public:
 	{ 
 		return doUpdate(evt);
 		//return true;
+	}
+
+	virtual void notifyGameOver();
+
+	virtual void notifyShot()
+	{
+		_playerShotTimer = 0;
 	}
 };

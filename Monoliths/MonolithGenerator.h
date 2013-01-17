@@ -39,7 +39,7 @@ public:
 		float sideMean, float sideSigma, 
 		float heightMean, float heightSigma, 
 		float scaleLambda, float slantLambda, float slantScaledown, float lowering,
-		float characterRadius = DEFAULT_CHARACTER_RADIUS, float characterHeight = MAX_CHARACTER_HEIGHT)
+		float characterRadius = DEFAULT_CHARACTER_RADIUS*2, float characterHeight = MAX_CHARACTER_HEIGHT)
 		: 
 #ifdef _DEBUG
 	_engine(42),

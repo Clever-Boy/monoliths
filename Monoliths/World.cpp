@@ -6,8 +6,10 @@
 #include "MonolithGenerator.h"
 #include "BoxObject.h"
 #include "Robot.h"
+#include "Player.h"
 
 #include "NavMeshDebugObject.h"
+#include "FollowAndKillStrategy.h"
 
 using namespace Ogre;
 
@@ -87,13 +89,26 @@ void World::createGameObjects()
 	_ground = new Ground(_mapSize, 500);
 	addGameObject(_ground);
 
-	_puppie = new Robot();
-	addGameObject(_puppie);
+	_player = new Player(-500*Ogre::Vector3::UNIT_Z);
+	addGameObject(_player);
 
+	//addEnemyRobot(Ogre::Vector2(5000,5000));
+
+	_puppie = new Robot();
+#ifdef _DEBUG
+	addGameObject(_puppie);
 	addGameObject(new BoxObject(Ogre::Vector3(500, 50, 0)));
 	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 500)));
 	addGameObject(new BoxObject(Ogre::Vector3(0, 50, 1000)));
-	
+#endif
+}
+
+void World::addEnemyRobot(const Ogre::Vector2& position, float angle)
+{
+	Ogre::Vector3 pos(position.x, 0, position.y);
+	Robot* robot = new Robot(pos, angle);
+	addGameObject(robot);
+	robot->setStrategy(new FollowAndKillStrategy(_player, this));
 }
 
 void World::initNavMesh()
@@ -108,4 +123,20 @@ void World::initNavMesh()
 void World::initDebugObjects()
 {
 	addGameObject(new NavMeshDebugObject(&_navMesh));
+}
+
+
+void World::shoot(Character* shootingCharacter)
+{
+	Ogre::Vector3 position = shootingCharacter->getGunPosition();
+	Ogre::Vector3 direction = shootingCharacter->getLookingDirection();
+
+	Ogre::Ray ray(position, direction);
+
+	Ogre::Vector3 impact;
+	GameObject* obj = pickNearest(ray, impact);
+	if (obj != NULL)
+	{
+		obj->shoot(this, shootingCharacter->getGunDamage(position.distance(impact)));
+	}
 }

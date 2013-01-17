@@ -4,6 +4,8 @@
 #include "Action.h"
 #include "FreeCameraController.h"
 #include "TPSCharacterController.h"
+#include "Player.h"
+#include "FPSCharacterController.h"
 
 //#include <OgreTextAreaOverlayElement.h>
 
@@ -27,8 +29,21 @@ void Game::start()
 
 	NameValuePairList misc;
 	misc["FSAA"] = "8";
-	_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
-	//_sceneManager = _root->createSceneManager(0, "Default");
+	
+	
+	//_window = _root->createRenderWindow("|| MONOLITHS ||", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), true);
+
+	//_window = _root->createRenderWindow("|| MONOLITHS ||", 1024, 768, false);
+
+
+	_window = _root->createRenderWindow("|| MONOLITHS ||", 
+#ifndef _DEBUG
+		1440, 900, true
+#else
+		1024, 768, false
+#endif
+		
+		);
 	_sceneManager = _root->createSceneManager("OctreeSceneManager");
 	ResourceGroupManager::getSingleton().addResourceLocation("media","FileSystem","General", false);
 	ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -47,27 +62,46 @@ void Game::start()
 
 void Game::setupOverlays()
 {
+	
+
 	Ogre::FontManager::getSingleton().getByName("TrebuchetMSBold")->load();
 
 	Ogre::OverlayManager& mgr = Ogre::OverlayManager::getSingleton();
 	Ogre::Overlay* overlay = mgr.create("kaksi");
-	_guiPanel = (OverlayContainer*)mgr.createOverlayElement("Panel", "pocs");
+	_guiPanel = (OverlayContainer*)mgr.createOverlayElement("Panel", "panel");
 	_guiPanel->setMetricsMode(GMM_PIXELS);
-	_guiPanel->setPosition(10,10);
-	_guiPanel->setDimensions(50,30);
-	//panel->setMaterialName("Panel");
-	//panel->setColour(ColourValue(0,0,0,0));
+	_guiPanel->setPosition(0,0);
+	_guiPanel->setDimensions(_viewport->getActualWidth(), _viewport->getActualHeight());
 	overlay->add2D(_guiPanel);
 
-	_fpsElement = (TextAreaOverlayElement*)mgr.createOverlayElement("TextArea", "fos");
+	_fpsElement = (TextAreaOverlayElement*)mgr.createOverlayElement("TextArea", "fps");
 	_fpsElement->setMetricsMode(GMM_PIXELS);
-	_fpsElement->setPosition(0,0);
+	_fpsElement->setPosition(0.05,0.05);
 	_fpsElement->setDimensions(50,30);
-	//_fpsElement->setCaption("CSICSKA!");
 	_fpsElement->setCharHeight(16);
 	_fpsElement->setFontName("TrebuchetMSBold");
-	//textArea->setColour(ColourValue(1,0,0,1));
+	_fpsElement->setColour(ColourValue(0.9,0.9,0.9,1));
 	_guiPanel->addChild(_fpsElement);
+
+	_hpElement = (TextAreaOverlayElement*)mgr.createOverlayElement("TextArea", "hp");
+	_hpElement->setMetricsMode(GMM_PIXELS);
+	_hpElement->setDimensions(70,50);
+	
+	_hpElement->setFontName("TrebuchetMSBold");
+	_guiPanel->addChild(_hpElement);
+
+	_gameOverElement = (TextAreaOverlayElement*)mgr.createOverlayElement("TextArea", "gameover");
+	_gameOverElement->setMetricsMode(GMM_PIXELS);
+	_gameOverElement->setPosition(200,400);
+	_gameOverElement->setDimensions(_viewport->getActualWidth()-200,_viewport->getActualHeight()-400);
+	_gameOverElement->setCharHeight(_viewport->getActualHeight()/5);
+	_gameOverElement->setFontName("TrebuchetMSBold");
+	_gameOverElement->setColour(ColourValue(1,0,0,1));
+	_gameOverElement->setCaption("YOU'RE DEAD.");
+	//_gameOverElement->setEnabled(false);
+	//_guiPanel->addChild(_gameOverElement);
+	
+	
 	overlay->show();
 
 }
@@ -86,13 +120,6 @@ void Game::setupRenderSystem()
 #ifndef BASIC_GRAPHICS
 	_compie->setEnabled(true);
 #endif
-}
-
-void Game::setupWorld()
-{
-	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
-	_world = new World(_sceneManager, _physicsManager, 40000); 
-	_world->init();
 }
 
 
@@ -118,8 +145,12 @@ void Game::setupInputSystem()
 		Action::ROBOT_IDLE, Action::ROBOT_WALK);
 	addController(puppieController);
 
-	setActiveController(0);
-	
+	FPSCharacterController* playerController = new FPSCharacterController(_world,_world->getPlayer(), Action::PLAYER_IDLE, Action::PLAYER_WALKINGS, Action::PLAYER_SHOOT);
+	addController(playerController);
+
+	//setActiveController(0);
+	setActiveController(2);
+	_world->showOnly(ET_STANDARD);
 }
 
 void Game::doRenderLoop()
@@ -146,24 +177,21 @@ void Game::doRenderLoop()
 		}
 	}
 
-	/*while(true)
-	{
-		if(_window->isClosed())
-		{
-			_root->shutdown();
-			break;
-		}
-		WindowEventUtilities::messagePump();
-		_mouse->capture();
-		_keyboard->capture();
-		
+}
 
-		if(!_root->renderOneFrame())
-		{
-			_root->shutdown();
-			break;
-		}
-	}*/
+void Game::notifyGameOver()
+{
+	_guiPanel->addChild(_gameOverElement);
+}
+
+
+void Game::setupWorld()
+{
+	_viewport->setBackgroundColour(ColourValue(0.8f,0.8f,0.8f));
+	_world = new World(_sceneManager, _physicsManager, 40000, this); 
+	_world->init();
+
+	_enemyGenerator = new EnemyGenerator(_world);
 }
 
 
@@ -178,7 +206,23 @@ bool Game::doUpdate(const FrameEvent& evt)
 	String fpsStr = StringConverter::toString(_window->getLastFPS(), 4);
 	_fpsElement->setCaption("FPS: "+fpsStr);
 
+	float health = _world->getPlayer()->getHealth();
+	String hpStr = StringConverter::toString(health);
+	_hpElement->setCaption(hpStr);
+	Ogre::Vector3 rgb = Ogre::Vector3(0,1,0)*(health/100.0f) + Ogre::Vector3(1,0,0)*(1-health)/100.0f;
+	_hpElement->setColour(ColourValue(rgb.x, rgb.y, rgb.z, 1));
+
+
+	float w = _viewport->getActualWidth();
+	float h = _viewport->getActualHeight();
+	//float ch = h/15;
+	_hpElement->setCharHeight(80);
+	_hpElement->setPosition(w-150,h-100);
+
 	_totalTime += evt.timeSinceLastEvent;
+
+	//_gameOverElement->setEnabled(_world->getPlayer()->isDead());
+	
 
 	if (_keyboard->isKeyDown(KC_ESCAPE))
 	{
@@ -195,7 +239,8 @@ bool Game::doUpdate(const FrameEvent& evt)
 	}
 
 	_activeController->onUpdating(evt, this);
-
+	
+	_enemyGenerator->doWork(_totalTime, evt.timeSinceLastFrame);
 	
 #if 1
 	_simulationAccumulator += evt.timeSinceLastFrame;
@@ -204,8 +249,10 @@ bool Game::doUpdate(const FrameEvent& evt)
 	{
 		float elap = Math::Floor(_simulationAccumulator/STEP_TIME);
 		elap*=STEP_TIME;
-
 		_simulationAccumulator -= elap;
+
+		_playerShotTimer+=elap;
+
 		_world->act(_totalTime, elap);
 		_physicsManager->simulate(elap);
 		_world->update(_totalTime, elap);

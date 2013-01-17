@@ -47,8 +47,6 @@ void GameObject::init(World* world)
 	Ogre::Vector3 scale = Ogre::Vector3(s,s,s);
 	if (_elements.size() > 0)
 	{
-
-
 		_node = _sceneManager->getRootSceneNode()->createChildSceneNode();
 		float objectId = world->getNexShaderObjectId();
 
@@ -60,16 +58,19 @@ void GameObject::init(World* world)
 
 			SceneNode* child = _node->createChildSceneNode(world->getNextId("object_"));
 			child->setScale(scale * i->scale);
-			(*i).init(child, world);
+			i->init(child, world);
 
-			if ((*i).actor != NULL)
+			if (i->actor != NULL)
 			{
-				(*i).actor->userData = this;
+				i->actor->userData = this;
 			}
 
-			for (int j = 0; j < (*i).entity->getNumSubEntities();j++)
+			if (i->entity != NULL)
 			{
-				(*i).entity->getSubEntity(j)->setCustomParameter(0, Ogre::Vector4(objectId));
+				for (int j = 0; j < i->entity->getNumSubEntities();j++)
+				{
+					i->entity->getSubEntity(j)->setCustomParameter(0, Ogre::Vector4(objectId));
+				}
 			}
 		}
 	}

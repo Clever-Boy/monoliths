@@ -16,6 +16,7 @@ extern "C" {
 
 class Ground;
 class Character;
+class Player;
 
 class World
 {
@@ -31,6 +32,8 @@ private:
 	float _mapSize;
 	NavMesh _navMesh;
 	PathFinder _pathFinder;
+	Player* _player;
+	GameStateListener* _gameStateListener;
 
 	//typedef union
 	//{
@@ -45,31 +48,37 @@ private:
 	void initNavMesh();
 	void initDebugObjects();
 
-/*
-	void initGameObjects()
-	{
-		for (int i = 0; i < _gameObjects.size(); i++)
-		{
-			_gameObjects[i]->init(this);
-		}
-	}
-*/
-
 public:
 
 
-	World(SceneManager* sceneManager, PhysicsManager* physicsManager, float mapSize) 
+	World(SceneManager* sceneManager, PhysicsManager* physicsManager, float mapSize, GameStateListener* gameStateListener) 
 		: _sceneManager(sceneManager),
 		_physicsManager(physicsManager),
 		_idCounter(0), 
 		_mapSize(mapSize),
-		_pathFinder(&_navMesh)
+		_pathFinder(&_navMesh),
+		_gameStateListener(gameStateListener)
 	{
 		_physicsManager = physicsManager;
 		_shaderObjectIdCounter = 0;
 		_rootNode = _sceneManager->getRootSceneNode();
 	}
+
+	float getMapSize()
+	{
+		return _mapSize;
+	}
 	
+	GameStateListener* getGameStateListener()
+	{
+		return _gameStateListener;
+	}
+
+	Player* getPlayer()
+	{
+		return _player;
+	}
+
 	NavMesh& getNavMesh()
 	{
 		return _navMesh;
@@ -120,6 +129,7 @@ public:
 	}
 
 	void showOnly(ElementType elementType);
+	void shoot(Character* shootingCharacter);
 
 	void init()
 	{
@@ -186,4 +196,6 @@ public:
 	{
 		return _gameObjects.end();
 	}
+
+	void addEnemyRobot(const Ogre::Vector2& position, float angle = 0);
 };
