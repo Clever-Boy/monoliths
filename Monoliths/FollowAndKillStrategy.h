@@ -68,6 +68,10 @@ public:
 				character->setDirection(dir);
 				character->setAction(Action::ROBOT_WALK);
 			}
+			else
+			{
+				character->setAction(Action::ROBOT_IDLE);
+			}
 		}
 	}
 };

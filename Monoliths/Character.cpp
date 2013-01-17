@@ -128,7 +128,12 @@ void Character::act(World* world, float totalTime, float dt)
 
 	if (!isDead())
 	{
-		_currentTriangle = world->getNavMesh().findTriangleOfPoint(getPos2d());	
+		NavMeshTriangle* tri = world->getNavMesh().findTriangleOfPoint(getPos2d());	
+		if (tri != NULL)
+		{
+			_currentTriangle = tri;
+		}
+		//_currentTriangle = world->getNavMesh().findTriangleOfPoint(getPos2d());	
 		_strategy->control(this, world, totalTime, dt);
 	}
 
