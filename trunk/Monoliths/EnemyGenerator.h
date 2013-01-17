@@ -40,14 +40,14 @@ public:
 		_timer(0),
 		_counter(0),
 	    _nextSpawn(0),
-		_minDistanceSquared(12000*12000),
-		_maxDistanceSquared(20000*20000)
+		_minDistanceSquared(10000*10000),
+		_maxDistanceSquared(16000*16000)
 	{
 	}
 
 	float getNextSpawnTime(float t)
 	{
-		if (t < 30) return 5;
+		if (t < 30) return 2;
 		return 15*std::exp(-t*0.001);
 	}
 
@@ -68,7 +68,7 @@ public:
 			_timer = 0;
 			_nextSpawn = getNextSpawnTime(t);
 
-			LOG("SPAWN! "+StringConverter::toString(pos)+" next after "+StringConverter::toString(_nextSpawn)+" s");
+			//LOG("SPAWN! "+StringConverter::toString(pos)+" next after "+StringConverter::toString(_nextSpawn)+" s");
 		}
 	}
 };
