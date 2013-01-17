@@ -43,11 +43,12 @@ public:
 	virtual void control(Character* character, World* world, float t, float dt)
 	{
 		Ogre::Vector2 pos = character->getPos2d();
-		character->clearActions();
+		//character->clearActions();
 		if ((pos-_dest).squaredLength() < 10)
 		{
 			character->setStrategy(Strategy::NOTHING);
-			character->addAction(Action::ROBOT_IDLE);
+			//character->addAction(Action::ROBOT_IDLE);
+			character->setAction(Action::ROBOT_IDLE);
 			_isActive = false;
 		}
 		else
@@ -55,8 +56,9 @@ public:
 			_currentPath = world->getPathFinder()->findPathBeetween(character->currentNavMeshTriangle(), _destTriangle);
 			_nextCorner = _currentPath->nextCorner(pos, _dest);
 			Ogre::Vector2 dir = _nextCorner-pos;
-			character->turn(dir);
-			character->addAction(Action::ROBOT_WALK);
+			character->setDirection(dir);
+			//character->addAction(Action::ROBOT_WALK);
+			character->setAction(Action::ROBOT_WALK);
 		}
 	}
 };

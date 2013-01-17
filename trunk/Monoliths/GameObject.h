@@ -111,8 +111,6 @@ public:
 
 	virtual void collectNavmeshElements(NavMesh* navMesh) { }
 
-
-
 	void setDebugMarked(bool marked)
 	{
 		_dbgMarked = marked;
@@ -128,5 +126,7 @@ public:
 			}
 		}
 	}
+
+	virtual void shoot(World* world, float damage) { }
 	//virtual void collectPolygons(ClipperLib::Polygons& polygons) { }
 };

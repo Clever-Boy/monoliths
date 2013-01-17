@@ -183,6 +183,7 @@ fragment_program PS_Compose hlsl
 	{
 		//param_named_auto fogColor fog_colour
 		param_named_auto viewportSize viewport_size
+		param_named_auto globalFilterColor custom 0
 	}
 }
 

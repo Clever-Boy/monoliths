@@ -109,6 +109,9 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="BoxObject.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="EnemyGenerator.h" />
+    <ClInclude Include="FollowAndKillStrategy.h" />
+    <ClInclude Include="FPSCharacterController.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="FreeCameraController.h" />
     <ClInclude Include="MeshGenerator.h" />
@@ -117,6 +120,7 @@ xcopy "$(SolutionDir)\common\plugins.cfg" "$(OutDir)" /F /R /Y /I</Command>
     <ClInclude Include="NavMeshDebugObject.h" />
     <ClInclude Include="PathFinder.h" />
     <ClInclude Include="PhysicsManager.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Strategy.h" />
     <ClInclude Include="TPSCharacterController.h" />

@@ -4,7 +4,7 @@
 
 const float PHYSICS2WORLD_SCALE = 100;
 
-const float DEFAULT_CHARACTER_RADIUS = 50;
+const float DEFAULT_CHARACTER_RADIUS = 30;
 const float MAX_CHARACTER_HEIGHT = 200;
 
 enum ElementType
@@ -13,4 +13,12 @@ enum ElementType
 	ET_STANDARD			= 1 << 0,
 	ET_MONOLITH_DBG		= 1 << 1,
 	ET_PATH_DBG			= 1 << 2
+};
+
+
+class GameStateListener
+{
+public:
+	virtual void notifyGameOver() = 0;
+	virtual void notifyShot() = 0;
 };

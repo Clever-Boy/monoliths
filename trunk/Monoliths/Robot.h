@@ -3,11 +3,13 @@
 #include "World.h"
 #include "Action.h"
 #include "Character.h"
+#include <random>
 
 using namespace Ogre;
 
 class Robot : public Character
 {
+
 	Ogre::Vector3 _initialPosition;
 	float _initialLookingAngle;
 
@@ -20,7 +22,8 @@ public:
 
 	Robot(Ogre::Vector3 initialPosition = Ogre::Vector3::ZERO, float initialLookingAngle = 0.01)
 		: _initialPosition(initialPosition),
-		  _initialLookingAngle(initialLookingAngle)
+		  _initialLookingAngle(initialLookingAngle),
+		  Character(DEFAULT_CHARACTER_RADIUS, 200, Ogre::Quaternion::ZERO, 100, Action::ROBOT_DYING)
 	{
 	}
 
@@ -45,5 +48,10 @@ public:
 	virtual Action* getInitialAction()
 	{
 		return Action::ROBOT_IDLE;
+	}
+
+	virtual float getGunDamage(float distance) const 
+	{ 
+		return std::ceil(6*std::exp(-distance*0.0002));
 	}
 };

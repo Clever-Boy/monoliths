@@ -129,8 +129,8 @@ float4 PS_Contour(float2 p : TEXCOORD0) : COLOR
 	//G.a /= pow(dh.x, 1.8);
 	G.a = 2*pow(G.a, 0.6);
 
-	//G.rgb /=pow(dh.x*0.0001, 0.3);
-	//G.rgb*=10;
+	G.rgb /=pow(dh.x*0.0001, 0.8);
+	//G.rgb/=10;
 	float bw = G.r * 0.21f + G.g * 0.39f + G.b * 0.4f + G.a;
 
 	return saturate(bw);
@@ -181,28 +181,42 @@ float2 NearestDHAroundPixel(float2 p)
 	return nearestDH;
 }
 
-float4 PS_Compose(float2 p : TEXCOORD0) : COLOR
+bool InsideRect(float2 halfSize, float2 p)
+{
+	static const float2 center = float2(0.5, 0.5);
+	float2 a = center-halfSize;
+	float2 b = center+halfSize;
+
+	return p.x>a.x && p.y>a.y && p.x<b.x && p.y<b.y;
+
+	//return (p>center-halfSize) && (p<center+halfSize);
+}
+
+bool InsideCrosshair(float2 p)
+{
+	static const float CrosshairLength = 20;
+	static const float CrosshairWidth = 1.5;
+
+	float2 halfSize = float2(CrosshairWidth, CrosshairLength) * 0.5;
+	return InsideRect(halfSize.xy * viewportSize.zw,p) || 
+		   InsideRect(halfSize.yx * viewportSize.zw,p);
+}
+
+float4 PS_Compose(float2 p : TEXCOORD0, uniform float4 globalFilterColor) : COLOR
 {
 	static const float4 fogColor = float4(0.8, 0.8, 0.8, 1);
-
-	if (p.x>0.75 && p.y>0.75)
+	if (InsideCrosshair(p))
 	{
-		p-=float2(0.75, 0.75);
-		p*=4;
-		float4 c = tex2D(original, p);
-		return MiniWindow(c);		
+		return float4(1,0,0,1);
 	}
-	else
-	{
 
-		float bw = 1-BlurContour(p).x;
-		//return bw;
-
-		float4 pix = tex2D(toonshaded, p);
-		pix.rgb*=bw;
+	float bw = 1-BlurContour(p).x;
 		
-		float2 dh = NearestDHAroundPixel(p);
-		float fog = Fog(dh);
-		return lerp(pix, fogColor, fog);
-	}
+
+	float4 pix = tex2D(toonshaded, p);
+	pix.rgb*=bw;
+		
+	float2 dh = NearestDHAroundPixel(p);
+	float fog = Fog(dh);
+	return lerp(pix, fogColor, fog);
 }

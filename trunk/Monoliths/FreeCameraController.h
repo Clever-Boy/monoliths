@@ -150,8 +150,6 @@ public:
 		return true;
 	}
 
-
-
 	virtual bool mousePressed(const MouseEvent &evt, MouseButtonID id )
 	{
 		_cameraMan.injectMouseDown(evt, id);
@@ -179,7 +177,6 @@ public:
 
 	void doPickRay(const Ray& ray)
 	{
-		
 		LOG("******************* "+StringConverter::toString(ray.getOrigin())+" / "+StringConverter::toString(ray.getDirection()));
 		
 		Ogre::Vector3 impact;
